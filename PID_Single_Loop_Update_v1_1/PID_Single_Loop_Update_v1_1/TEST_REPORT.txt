@@ -1,0 +1,33 @@
+PID SINGLE-LOOP v1.1 — SOFTWARE VALIDATION
+
+82 software tests: PASS
+- 67 previous single-loop regression tests rerun successfully.
+- 15 additional response-wait tests: hold without PID math/command; exclude
+  waiting-period samples; baseline start; zero correction/deadband; preview;
+  stale and malformed data stop; long waits with fresh data; in-run timing
+  edits; CSV setting/deadline; stopping while waiting; incomplete post-wait
+  averages; gate starts after callback; nonblocking logic; GUI field wiring.
+- GUI-method tests execute extracted source methods with lightweight widget,
+  context and timer doubles. They do NOT launch or render a Qt application.
+
+10 installer/restore checks: PASS
+- Original-source preflight changes nothing.
+- Clean original-source install matches expected patched source.
+- Verified v1.0 upgrade matches expected source; restore to v1.0, then original.
+- Upgrade preflight changes nothing.
+- Repeated v1.1 install is a no-op.
+- A modified v1.0 installation is refused without writes.
+- An unsupported original revision is refused without writes.
+- CRLF/BOM preservation and restoration.
+- Unrelated original-source edits preserved.
+- Injected write failure rolls back program files and the v1.0 marker.
+
+Fixture: supplied newer Control System Tune 2_23_NewVersion_9_21_RCDS.zip,
+with the previously delivered single-loop v1.0 patch applied for upgrade tests.
+
+Not tested: native Qt rendering, complete live GUI integration, Windows batch
+execution, LabVIEW handshake, physical supplies, beam timing or effectiveness,
+GA operation on hardware. No hardware endpoint was opened. A timed receive-side
+wait does not guarantee a command has physically taken effect.
+
+Raw test outcomes: validation_logs/software_tests.txt, installer_tests.txt.

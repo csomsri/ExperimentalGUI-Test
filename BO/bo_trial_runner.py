@@ -1,0 +1,30 @@
+"""Additional measured recovery gate around the shared automatic trial runner."""
+import math
+import time
+
+
+def recovery_ready(page):
+    """Require three seconds of fresh beam and measured TC near the baseline."""
+    now = time.monotonic()
+    reference = page._ga_recovery_reference
+    key = page._ga_restore_started
+    if getattr(page, '_bo_recovery_key', None) != key:
+        page._bo_recovery_key = key
+        page._bo_stable_since = None
+    snapshot = page._beam_window_snapshot()
+    beam = float(snapshot.get('value_nA', float('nan')))
+    index = page._actuator_index
+    actual = page.context.actual(index)
+    stable = (bool(snapshot.get('valid')) and math.isfinite(beam)
+              and math.isfinite(actual)
+              and abs(actual - reference.actual_map[index]) <= 0.1
+              and abs(beam - reference.beam_nA) <= max(abs(reference.beam_nA) * 0.05, 0.1))
+    if not stable:
+        page._bo_stable_since = None
+    elif page._bo_stable_since is None:
+        page._bo_stable_since = now
+    if page._bo_stable_since is not None and now - page._bo_stable_since >= 3.0:
+        return True
+    if now - key > 60.0:
+        raise RuntimeError('BO baseline recovery timed out (beam / measured TC not stable)')
+    return False

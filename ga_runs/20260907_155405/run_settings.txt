@@ -1,0 +1,23 @@
+actuator=TC10
+setpoint_nA=6.0
+baseline_target_A=548.7
+baseline_readback_A=544.2118522666586
+baseline_beam_nA=5.83986202360959
+baseline_beam_tolerance_nA=0.2
+population=4
+generations=2
+kp_bounds=0.0,2.0
+ki_bounds=0.0,0.2
+kd_bounds=0.0,0.0
+warmup_s=5.0
+evaluation_s=30.0
+steady_state_window_s=5.0
+max_tc_excursion_A=0.5
+max_abs_beam_error_nA=3.0
+minimum_valid_beam_nA=0.05
+max_ga_tc_rate_A_per_s=1.0
+recovery_scope=active
+recovery_targets_A=((9, 548.7),)
+recovery_readbacks_A=((9, 544.2118522666586),)
+recovery_min_beam_fraction=0.5
+weights=GAFitnessWeights(tracking=1.0, steady_state=2.4000000000000004, movement=0.25, saturation=5.0, oscillation=1.0, safety_violation=1000000.0)

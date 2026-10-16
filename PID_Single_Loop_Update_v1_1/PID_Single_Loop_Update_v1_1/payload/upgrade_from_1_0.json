@@ -1,0 +1,67 @@
+{
+  "main_control_gui.py": [],
+  "zmq_rep_server.py": [],
+  "pid_controller.py": [],
+  "pid_ga_control_tab.py": [
+    {
+      "old": "        self.beam_average_spin.setSuffix(\" ms\")\n",
+      "new": "        self.beam_average_spin.setSuffix(\" ms\")\n        self.response_wait_spin = QSpinBox()\n        self.response_wait_spin.setRange(0, 10000)\n        self.response_wait_spin.setSingleStep(50)\n        self.response_wait_spin.setValue(0)\n        self.response_wait_spin.setSuffix(\" ms\")\n        self.response_wait_spin.setToolTip(\n            \"After a nonzero TC correction, ignore beam samples received during \"\n            \"this wait, then collect a complete fresh beam average. \"\n            \"0 ms keeps the previous behavior. Editable during PID operation. \"\n            \"Starts after the Python callback, NOT a LabVIEW-applied acknowledgment.\"\n        )\n",
+      "count": 1
+    },
+    {
+      "old": "            self.beam_average_spin,\n",
+      "new": "            self.beam_average_spin,\n            self.response_wait_spin,\n",
+      "count": 2
+    },
+    {
+      "old": "        pair(\"D filter τ\", self.derivative_tau_spin, \"Beam stale\", self.beam_stale_spin)\n",
+      "new": "        pair(\"Response wait\", self.response_wait_spin, \"D filter τ\", self.derivative_tau_spin)\n        pair(\"Beam stale\", self.beam_stale_spin)\n",
+      "count": 1
+    },
+    {
+      "old": "        self.beam_average_spin.valueChanged.connect(self._on_pid_timing_changed)\n",
+      "new": "        self.beam_average_spin.valueChanged.connect(self._on_pid_timing_changed)\n        self.response_wait_spin.valueChanged.connect(self._on_pid_timing_changed)\n",
+      "count": 1
+    },
+    {
+      "old": "    def _beam_window_snapshot(self, *, for_decision: bool = False) -> dict:\n        return BEAM_BUFFER.snapshot(\n            self.beam_average_spin.value() / 1000.0,\n            self._beam_stale_limit(), calibrate_beam_mean,\n            after=self._beam_cycle_mark if for_decision else None,\n        )\n",
+      "new": "    def _beam_window_snapshot(self, *, for_decision: bool = False) -> dict:\n        now = time.monotonic()\n        mark = self._beam_cycle_mark if for_decision else None\n        snapshot = BEAM_BUFFER.snapshot(\n            self.beam_average_spin.value() / 1000.0,\n            self._beam_stale_limit(), calibrate_beam_mean,\n            after=mark, now=now,\n        )\n        # Keep checking data health throughout the wait: stale/invalid feedback\n        # still uses the normal stop path. No sleep and no second timer.\n        if (for_decision and mark is not None and now < mark.receive_time\n                and snapshot.get(\"fresh\")):\n            remaining_ms = 1000.0 * (mark.receive_time - now)\n            snapshot.update(ready=False, valid=False,\n                            response_wait_remaining_ms=remaining_ms,\n                            status=f\"RESPONSE WAIT — {remaining_ms:.0f} ms remaining\")\n        return snapshot\n",
+      "count": 1
+    },
+    {
+      "old": "        self._last_pid_time = time.monotonic()\n        self._beam_cycle_mark = BEAM_BUFFER.mark()\n        self._pid_timer.setInterval(self.loop_period_spin.value())\n",
+      "new": "        self._last_pid_time = time.monotonic()\n        # An in-run timing edit conservatively restarts both the wait and average.\n        self._beam_cycle_mark = BEAM_BUFFER.mark(\n            now=time.monotonic() + self.response_wait_spin.value() / 1000.0\n        )\n        self._pid_timer.setInterval(self.loop_period_spin.value())\n",
+      "count": 1
+    },
+    {
+      "old": "        self.pid_status_label.setText(\"PID HOLD — COLLECTING NEW BEAM AVERAGE\")\n",
+      "new": "        self.pid_status_label.setText(\"PID HOLD — TIMING UPDATED; NEW WAIT/AVERAGE\")\n",
+      "count": 1
+    },
+    {
+      "old": "            \"beam_average_ms\": self.beam_average_spin.value(),\n",
+      "new": "            \"beam_average_ms\": self.beam_average_spin.value(),\n            \"response_wait_ms\": self.response_wait_spin.value(),\n",
+      "count": 1
+    },
+    {
+      "old": "            \"math_dt_s\": dt, \"status\": status,\n",
+      "new": "            \"math_dt_s\": dt, \"status\": status,\n            \"next_average_after_receive_mono_s\": (\n                self._beam_cycle_mark.receive_time if self._beam_cycle_mark is not None else None\n            ),\n",
+      "count": 1
+    },
+    {
+      "old": "        # Anything already received at this point belongs to the OLD decision.\n        # The next decision needs an entirely new beam-average window.\n        self._beam_cycle_mark = BEAM_BUFFER.mark()\n",
+      "new": "        # Anything received before the response-wait deadline is excluded from\n        # the NEXT average, even if it reaches the GUI queue late. This is a\n        # receive-side delay after Python, not proof LabVIEW applied the target.\n        # Preview uses the same timing for a nonzero proposed correction.\n        # A zero correction (e.g. deadband) needs no additional response wait.\n        wait_s = self.response_wait_spin.value() / 1000.0 if command_delta != 0.0 else 0.0\n        self._beam_cycle_mark = BEAM_BUFFER.mark(now=time.monotonic() + wait_s)\n",
+      "count": 1
+    },
+    {
+      "old": "                 f\"AVG {int(snapshot.get('sample_count', 0))} samples\"]\n",
+      "new": "                 f\"AVG {int(snapshot.get('sample_count', 0))} samples\"]\n        if wait_s > 0.0:\n            flags.append(f\"NEXT RESPONSE WAIT {wait_s * 1000.0:.0f} ms\")\n",
+      "count": 1
+    },
+    {
+      "old": "                \"beam_average_ms\": int(self.beam_average_spin.value()),\n",
+      "new": "                \"beam_average_ms\": int(self.beam_average_spin.value()),\n                \"response_wait_ms\": int(self.response_wait_spin.value()),\n",
+      "count": 2
+    }
+  ]
+}

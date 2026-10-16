@@ -1,0 +1,90 @@
+test_crlf_bom_original_and_restore (__main__.InstallerTests.test_crlf_bom_original_and_restore) ... ok
+test_install_clean_source_matches_expected (__main__.InstallerTests.test_install_clean_source_matches_expected) ... ok
+test_modified_v1_is_rejected_without_writes (__main__.InstallerTests.test_modified_v1_is_rejected_without_writes) ... ok
+test_preflight_does_not_write (__main__.InstallerTests.test_preflight_does_not_write) ... ok
+test_repeated_install_noop (__main__.InstallerTests.test_repeated_install_noop) ... ok
+test_rollback_restores_v1_marker_on_one_write_failure (__main__.InstallerTests.test_rollback_restores_v1_marker_on_one_write_failure) ... ok
+test_unknown_original_revision_rejected_without_writes (__main__.InstallerTests.test_unknown_original_revision_rejected_without_writes) ... ok
+test_unrelated_original_edits_preserved (__main__.InstallerTests.test_unrelated_original_edits_preserved) ... ok
+test_upgrade_preflight_does_not_write (__main__.InstallerTests.test_upgrade_preflight_does_not_write) ... ok
+test_upgrade_verified_v1_source_and_restore_twice (__main__.InstallerTests.test_upgrade_verified_v1_source_and_restore_twice) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 1.387s
+
+OK
+Project: /tmp/tmpo0y12o8c
+Preflight passed for all four existing modules and two new modules.
+Installed: single-loop-pid-1.1
+Backup: /tmp/tmpo0y12o8c/pid_update_backups/20260928_182557_32c7b6
+Unchanged: magnetic output/scaling, calibration, RCDS modules and SQLite modules.
+Restart the ENTIRE controller application (main.py), including its ZeroMQ process.
+Test with ARM HARDWARE OUTPUT unchecked first.
+Previous program files restored. Decision CSVs and all databases were left untouched.
+Project: /tmp/tmpgcm5g243
+Preflight passed for all four existing modules and two new modules.
+Installed: single-loop-pid-1.1
+Backup: /tmp/tmpgcm5g243/pid_update_backups/20260928_182557_453731
+Unchanged: magnetic output/scaling, calibration, RCDS modules and SQLite modules.
+Restart the ENTIRE controller application (main.py), including its ZeroMQ process.
+Test with ARM HARDWARE OUTPUT unchecked first.
+Project: /tmp/tmpx4tzdcfg
+Preflight passed for all four existing modules and two new modules.
+Installed: single-loop-pid-1.0
+Backup: /tmp/tmpx4tzdcfg/pid_update_backups/20260928_182557_ca0ee3
+Unchanged: magnetic output/scaling, calibration, RCDS modules and SQLite modules.
+Restart the ENTIRE controller application (main.py), including its ZeroMQ process.
+Test with ARM HARDWARE OUTPUT unchecked first.
+Project: /tmp/tmp_cwzjogi
+Preflight passed for all four existing modules and two new modules.
+CHECK ONLY: no files were changed.
+Project: /tmp/tmpfw0h1s3f
+Preflight passed for all four existing modules and two new modules.
+Installed: single-loop-pid-1.1
+Backup: /tmp/tmpfw0h1s3f/pid_update_backups/20260928_182557_403df8
+Unchanged: magnetic output/scaling, calibration, RCDS modules and SQLite modules.
+Restart the ENTIRE controller application (main.py), including its ZeroMQ process.
+Test with ARM HARDWARE OUTPUT unchecked first.
+This exact update is already installed. Nothing changed.
+Project: /tmp/tmpxhsje1c_
+Preflight passed for all four existing modules and two new modules.
+Installed: single-loop-pid-1.0
+Backup: /tmp/tmpxhsje1c_/pid_update_backups/20260928_182557_369dda
+Unchanged: magnetic output/scaling, calibration, RCDS modules and SQLite modules.
+Restart the ENTIRE controller application (main.py), including its ZeroMQ process.
+Test with ARM HARDWARE OUTPUT unchecked first.
+Project: /tmp/tmpxhsje1c_
+Preflight passed for all four existing modules and two new modules.
+Project: /tmp/tmp4ymuddg8
+Preflight passed for all four existing modules and two new modules.
+Installed: single-loop-pid-1.1
+Backup: /tmp/tmp4ymuddg8/pid_update_backups/20260928_182557_0d6ea0
+Unchanged: magnetic output/scaling, calibration, RCDS modules and SQLite modules.
+Restart the ENTIRE controller application (main.py), including its ZeroMQ process.
+Test with ARM HARDWARE OUTPUT unchecked first.
+Project: /tmp/tmp87m5h5vo
+Preflight passed for all four existing modules and two new modules.
+Installed: single-loop-pid-1.0
+Backup: /tmp/tmp87m5h5vo/pid_update_backups/20260928_182557_8d7b88
+Unchanged: magnetic output/scaling, calibration, RCDS modules and SQLite modules.
+Restart the ENTIRE controller application (main.py), including its ZeroMQ process.
+Test with ARM HARDWARE OUTPUT unchecked first.
+Project: /tmp/tmp87m5h5vo
+Preflight passed for all four existing modules and two new modules.
+CHECK ONLY: no files were changed.
+Project: /tmp/tmplpffg73h
+Preflight passed for all four existing modules and two new modules.
+Installed: single-loop-pid-1.0
+Backup: /tmp/tmplpffg73h/pid_update_backups/20260928_182558_7800d0
+Unchanged: magnetic output/scaling, calibration, RCDS modules and SQLite modules.
+Restart the ENTIRE controller application (main.py), including its ZeroMQ process.
+Test with ARM HARDWARE OUTPUT unchecked first.
+Project: /tmp/tmplpffg73h
+Preflight passed for all four existing modules and two new modules.
+Installed: single-loop-pid-1.1
+Backup: /tmp/tmplpffg73h/pid_update_backups/20260928_182558_6deaa7
+Unchanged: magnetic output/scaling, calibration, RCDS modules and SQLite modules.
+Restart the ENTIRE controller application (main.py), including its ZeroMQ process.
+Test with ARM HARDWARE OUTPUT unchecked first.
+Previous program files restored. Decision CSVs and all databases were left untouched.
+Previous program files restored. Decision CSVs and all databases were left untouched.

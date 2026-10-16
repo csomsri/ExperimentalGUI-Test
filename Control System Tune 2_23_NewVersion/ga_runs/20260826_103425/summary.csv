@@ -1,0 +1,2 @@
+generation,candidate,kp,ki,kd,fitness,j_track,j_ss,j_move,j_sat,j_osc,safety_penalty,phase,reason,duration_s,scored_samples,total_samples,max_abs_error_nA,max_tc_excursion_a
+1,1,2.0,0.1,0.0,1000007.0055661945,0.24167815412952534,0.24167815412952534,5.0,1.0,0.030531732174672456,1000000.0,ABORTED,PID/ACTUATOR SATURATED FOR 5 s,5.125,2,47,1.5499047677641293,0.5
