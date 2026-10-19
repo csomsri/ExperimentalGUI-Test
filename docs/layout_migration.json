@@ -1,0 +1,832 @@
+[
+  {
+    "source": "4 meters with time domian.py",
+    "destination": "archive\\legacy_scripts\\4 meters with time domian.py",
+    "sha256": "9e735921feaef71cbe4812245cfccf3d22ef09082b7a16f9ea80f5f0a31941f2"
+  },
+  {
+    "source": "4 meters.py",
+    "destination": "archive\\legacy_scripts\\4 meters.py",
+    "sha256": "26e7c5fb1dd5ce23d2ed8c701c6159bd385e7fa304595b4110248adfa080550b"
+  },
+  {
+    "source": "4 meters_done.py",
+    "destination": "archive\\legacy_scripts\\4 meters_done.py",
+    "sha256": "0967b7f6536e803962a638fca54621d9946cbef60ea520fe4dfd26fb9d3593c0"
+  },
+  {
+    "source": "ADAPTIVE_PID_CHANGES.patch",
+    "destination": "archive\\update_bundles\\ADAPTIVE_PID_CHANGES.patch",
+    "sha256": "39880281f6bc95a3bddd1575dd9c24eb9be8f468ab2ebbf6324667ebbcf28263"
+  },
+  {
+    "source": "alarm.py",
+    "destination": "python\\app\\alarm.py",
+    "sha256": "271d6395345000306f0749abd9a5f6512fa2cc5732619706237c768f732b548e"
+  },
+  {
+    "source": "AlarmSettingsDialog.py",
+    "destination": "archive\\legacy_scripts\\AlarmSettingsDialog.py",
+    "sha256": "e177db57f0db1382965ecef9fcf0af01150294d0cb3780ef5581e5b92f297f18"
+  },
+  {
+    "source": "alarm_config.json",
+    "destination": "config\\alarm_config.json",
+    "sha256": "9bf98ae97affa141e0651882721c1b0f6b21128f6326df8568ae1404fa29b5dd"
+  },
+  {
+    "source": "app_settings.json",
+    "destination": "config\\app_settings.json",
+    "sha256": "7a9774373befd98918de3b96971ec66f1a57f9a8f4b9d68e0f112d16655f8ed5"
+  },
+  {
+    "source": "app_settings.py",
+    "destination": "python\\app\\app_settings.py",
+    "sha256": "cba42bbb92c2bafa7fcf225a756826048a195c96d92baf0674e5b894c38f685d"
+  },
+  {
+    "source": "arrow_down.png",
+    "destination": "assets\\images\\arrow_down.png",
+    "sha256": "0db8ab187e1aba7da527a869ab44176b4551e39dd655a1df99b47a8c9691851a"
+  },
+  {
+    "source": "arrow_up.png",
+    "destination": "assets\\images\\arrow_up.png",
+    "sha256": "f71a224916a1c8e09dd8d89f658164fb365e9b923a012aaf8f6dd3484a341660"
+  },
+  {
+    "source": "atom_only.mp4",
+    "destination": "assets\\videos\\atom_only.mp4",
+    "sha256": "5ff432184c186777b17f7c7da26f4cd9ed4cae54905e6bb7a986029c55c1368f"
+  },
+  {
+    "source": "atom_only1.mp4",
+    "destination": "assets\\videos\\atom_only1.mp4",
+    "sha256": "5ff432184c186777b17f7c7da26f4cd9ed4cae54905e6bb7a986029c55c1368f"
+  },
+  {
+    "source": "bar_background.png",
+    "destination": "assets\\images\\bar_background.png",
+    "sha256": "f0551c543358a5f35444de2c3fcbf815ce5298dbb5119ea6028c07d1c9168013"
+  },
+  {
+    "source": "bar_background2.png",
+    "destination": "assets\\images\\bar_background2.png",
+    "sha256": "420f173635a2e01a40066df8207135f76633899d0382351540543d180454f748"
+  },
+  {
+    "source": "BeamTransportMonitoringWindow.py",
+    "destination": "python\\app\\BeamTransportMonitoringWindow.py",
+    "sha256": "825f5b0379becc5b93e5466fa39e4a23bd9d4d4e1a7e7664cbb2c5c3129b044a"
+  },
+  {
+    "source": "beam_cal.json",
+    "destination": "config\\beam_cal.json",
+    "sha256": "b7900f9604ff17f7ad6587737c2e33d441e03bef453e0d7b8a86c6ca26c07c5d"
+  },
+  {
+    "source": "beam_cal.py",
+    "destination": "python\\app\\beam_cal.py",
+    "sha256": "3501240031d576ba981d20920e2d53c609149786ddda9a8162e5cdfac7db9209"
+  },
+  {
+    "source": "beam_range.py",
+    "destination": "python\\app\\beam_range.py",
+    "sha256": "964ba21c15cdd650ceea7d408bc7e075c282fc35d706f20188829198579cad44"
+  },
+  {
+    "source": "beam_trace.log",
+    "destination": "runtime\\logs\\beam_trace.log",
+    "sha256": "dcbda9c93600805360c01c4fae48f24cdd650e3fce6b2904c1e25ceeb2e6e38a"
+  },
+  {
+    "source": "beam_trace.py",
+    "destination": "python\\app\\beam_trace.py",
+    "sha256": "eec55450b5d4525895fbd4e2cb5deeebd7cf4d639ac6473c697b870f08811233"
+  },
+  {
+    "source": "beam_transport_bg.png",
+    "destination": "assets\\images\\beam_transport_bg.png",
+    "sha256": "c55de5f4a268623755b279d7467f6bf5cae2289da274eca0392e75fd855bf986"
+  },
+  {
+    "source": "beam_transport_bg1.png",
+    "destination": "assets\\images\\beam_transport_bg1.png",
+    "sha256": "67852fd822aabdb21c0dfcd7eaeb54e6045c7913df659ba80aff69d2723471f4"
+  },
+  {
+    "source": "beam_transport_bg3.png",
+    "destination": "assets\\images\\beam_transport_bg3.png",
+    "sha256": "0800a096cd72b4fbddded7666d85693641f9b66c643146582bb6865f070d2ac5"
+  },
+  {
+    "source": "calibration.json",
+    "destination": "config\\calibration.json",
+    "sha256": "ce8ae8120d25a33e4543507192e23bb1f1802dd1167b7f8ae76b91c117a233dc"
+  },
+  {
+    "source": "calibration.xlsx",
+    "destination": "config\\calibration.xlsx",
+    "sha256": "c23ffcdd365f9d6f3a8892f5a6f1c36935f609b9e52e9a8cfb9d81d965958de3"
+  },
+  {
+    "source": "calibration1_24.xlsx",
+    "destination": "archive\\reference_data\\calibration1_24.xlsx",
+    "sha256": "16c28cbebe11e391caf3da543962bf53ce9777c728432f071f68abd00f67d6ad"
+  },
+  {
+    "source": "calibration_records.xlsx",
+    "destination": "archive\\reference_data\\calibration_records.xlsx",
+    "sha256": "e916a18f356de6c9ece582548d3f5f1b625cc48c65ee4c58fdb5d04aac295db2"
+  },
+  {
+    "source": "calibration_records1.xlsx",
+    "destination": "archive\\reference_data\\calibration_records1.xlsx",
+    "sha256": "c9b0b0edf5f7244c7efa8b990bc9070a36aec62f89fa06d9e976528c4a645175"
+  },
+  {
+    "source": "chart.umd.min.js",
+    "destination": "assets\\web\\chart.umd.min.js",
+    "sha256": "d46d97a1fd022c5fb29fa2f45ebcbc32202d73aeebf076ce5f7248f5498fc7d7"
+  },
+  {
+    "source": "CHECK_INSTALLATION.py",
+    "destination": "archive\\legacy_scripts\\CHECK_INSTALLATION.py",
+    "sha256": "0e4b5a611c9b76d6b3b58ad502c21b20b8a33633ec1015a227001d7925422c14"
+  },
+  {
+    "source": "cnl_logo.png",
+    "destination": "assets\\images\\cnl_logo.png",
+    "sha256": "fd32d0af2dcf10a4d36ea13fbe3c7cd20c538560823a360c3ada2b3d73579452"
+  },
+  {
+    "source": "CNL_record_plots_20260908_114735.pdf",
+    "destination": "archive\\reference_data\\CNL_record_plots_20260908_114735.pdf",
+    "sha256": "d9cea47fd268f8b8c8bcf0370abbbf79a4aeb3cbbe32ce6deaff334f7b2b0791"
+  },
+  {
+    "source": "cnl_title.png",
+    "destination": "assets\\images\\cnl_title.png",
+    "sha256": "08accbee045bbe109b17e5c6cb7ba702b290e5c6b3364695b0be946f0233b52f"
+  },
+  {
+    "source": "cnl_title1.png",
+    "destination": "assets\\images\\cnl_title1.png",
+    "sha256": "d214573a93df907850cf4c58512acbab04eb6d3c7136424c098a6169fb76b5ad"
+  },
+  {
+    "source": "cnl_title2.png",
+    "destination": "assets\\images\\cnl_title2.png",
+    "sha256": "f87c7b472103ec4d6292ff4a20c0ef82678c257d8f79e3bdcbcd9552e79b226b"
+  },
+  {
+    "source": "Control System Tune 2_23_NewVersion",
+    "destination": "archive\\previous_versions\\Control System Tune 2_23_NewVersion",
+    "sha256": null
+  },
+  {
+    "source": "controller_context.py",
+    "destination": "python\\app\\controller_context.py",
+    "sha256": "9e91f55adc266bae23d9d3adfd26734aa420ece4596e31d97888e1159e40a2c0"
+  },
+  {
+    "source": "controller_theme.py",
+    "destination": "python\\app\\controller_theme.py",
+    "sha256": "55bfe6d0c97282476fa15066c7d6042440c1181612a0e988a0820e9562187800"
+  },
+  {
+    "source": "Control_1_15.vi",
+    "destination": "archive\\labview\\Control_1_15.vi",
+    "sha256": "fdab4b89ea72eae3da9f9f783d55ccb49f31d62f42f9aad8bcdf33efc30848a9"
+  },
+  {
+    "source": "crocker_ui_background.jpg",
+    "destination": "assets\\images\\crocker_ui_background.jpg",
+    "sha256": "5c99a072359fad121bf1049990ba71b976c3f34690dfefd0f3f23f348402821a"
+  },
+  {
+    "source": "Current_Setting_1_7_26.vi",
+    "destination": "archive\\labview\\Current_Setting_1_7_26.vi",
+    "sha256": "9d4dd2b8a86b27645269aac19ed3b6b28157f35fe70806d0c2fd9829ae38fc93"
+  },
+  {
+    "source": "Current_Setting_1_7_26_TC9_ramp_working.vi",
+    "destination": "archive\\labview\\Current_Setting_1_7_26_TC9_ramp_working.vi",
+    "sha256": "b298ed0f10bc49294d31db811a989b0016b8b820e804ee07b8e022ede50841a6"
+  },
+  {
+    "source": "Current_Setting_1_8_26.vi",
+    "destination": "archive\\labview\\Current_Setting_1_8_26.vi",
+    "sha256": "c7d7ab04ee7db15bd2cf06fd7378768a6851d1780b1762df5543ae22f8db05b7"
+  },
+  {
+    "source": "cyber_bg.png",
+    "destination": "assets\\images\\cyber_bg.png",
+    "sha256": "fd912890ff81aee10bf1c74e60ab12279a2c1f526a9072f9eb5bb5f1b61b6a7f"
+  },
+  {
+    "source": "cyber_bg1.jpg",
+    "destination": "assets\\images\\cyber_bg1.jpg",
+    "sha256": "e1c1b5779ef542a9a092659c752186313a41a0aa63661e4748acb4655260fce3"
+  },
+  {
+    "source": "cyber_bg1.png",
+    "destination": "assets\\images\\cyber_bg1.png",
+    "sha256": "2ec56e886be5b7628612be7341755b662b71116ad6515789fcd74ac63927a2b1"
+  },
+  {
+    "source": "cyber_bg3.png",
+    "destination": "assets\\images\\cyber_bg3.png",
+    "sha256": "47be95e8d97abaad43f164df1f275e7ebf93553324f7d8f9a2ae943969b053f5"
+  },
+  {
+    "source": "cyber_bg4.png",
+    "destination": "assets\\images\\cyber_bg4.png",
+    "sha256": "476ea3b574ad8a3f278f0a9729f08012bcb2b5bba9aeb4612836f3630fab5b6f"
+  },
+  {
+    "source": "cyber_bg6.png",
+    "destination": "assets\\images\\cyber_bg6.png",
+    "sha256": "2d708b5c4349194cf9587933025e5d0746883c10f286e4ef1fb109d7f5fcee2f"
+  },
+  {
+    "source": "cyber_bg7.png",
+    "destination": "assets\\images\\cyber_bg7.png",
+    "sha256": "2b03474d496f7576f61e41f22b8e36e60b2c23df8813ea4a0f6eb792cd180e9c"
+  },
+  {
+    "source": "cyclotron_data.db",
+    "destination": "runtime\\data\\cyclotron_data.db",
+    "sha256": "6e0f4729d1cb81f0bd84b0596fde9cf6088deff59319ac7d03b50f692f6d5f2d"
+  },
+  {
+    "source": "cyclotron_data.db-shm",
+    "destination": "runtime\\data\\cyclotron_data.db-shm",
+    "sha256": "009324424a22947c87b606b0e289a0687c2a8bf0871c9181efc9c85598580b84"
+  },
+  {
+    "source": "cyclotron_data.db-wal",
+    "destination": "runtime\\data\\cyclotron_data.db-wal",
+    "sha256": "efd308eefe4d139b10e783b5584096945f4d65da85f3877b8f42262a3bc46cf9"
+  },
+  {
+    "source": "ga_pid_tuner.py",
+    "destination": "python\\app\\ga_pid_tuner.py",
+    "sha256": "a4f38b489270d7e828a9a4b8d70bb968d808e42abfdab52dafcbaa5afa7fa316"
+  },
+  {
+    "source": "ga_recovery_manager.py",
+    "destination": "python\\app\\ga_recovery_manager.py",
+    "sha256": "01e00b781bb65843c3c95041ca8eea7af63c2fc934a6b67c9945f99dd83fa864"
+  },
+  {
+    "source": "ga_runs",
+    "destination": "runtime\\ga_runs",
+    "sha256": null
+  },
+  {
+    "source": "ga_test_runner.py",
+    "destination": "python\\app\\ga_test_runner.py",
+    "sha256": "2450ecb8f15f862a7d860979b9ba7303df0dec6bc87fec4e1a2e5d3bc999d96b"
+  },
+  {
+    "source": "gui_bg.mp4",
+    "destination": "assets\\videos\\gui_bg.mp4",
+    "sha256": "27c6250c1bd6c400fc914897b271960f3d492caa0b82e8ca8438da837e6a2769"
+  },
+  {
+    "source": "gui_bg1.mp4",
+    "destination": "assets\\videos\\gui_bg1.mp4",
+    "sha256": "921a6b6f114ac8bf07af2d1371d1b04b2c1e666d3d1efcf0c7494b96103f5776"
+  },
+  {
+    "source": "gui_window.py",
+    "destination": "archive\\legacy_scripts\\gui_window.py",
+    "sha256": "53a2cd21bed1c9b8b26775434befbfaa63db9ab338a344f4faa167a6d5bf5a5e"
+  },
+  {
+    "source": "GV_TC1.vi",
+    "destination": "archive\\labview\\GV_TC1.vi",
+    "sha256": "f0c45167121882c6c4a8495e9b577d487c3001c73ff5985e8d5335b44fe2ce0e"
+  },
+  {
+    "source": "GV_TC1_M.vi",
+    "destination": "archive\\labview\\GV_TC1_M.vi",
+    "sha256": "a80f1739313d7235b27bde5728cf27499be2c99027db9461d82fd26faffbb58a"
+  },
+  {
+    "source": "GV_TC9_Mo.vi",
+    "destination": "archive\\labview\\GV_TC9_Mo.vi",
+    "sha256": "570ac5f365b81711586d0bb11f94355f79c6d56c517ee63cb4287ec3489f2e15"
+  },
+  {
+    "source": "icons",
+    "destination": "assets\\icons",
+    "sha256": null
+  },
+  {
+    "source": "icon_alarm.png",
+    "destination": "assets\\images\\icon_alarm.png",
+    "sha256": "c206b58a6f64c821044096ac538a06e336cd14e41fbd56eaf3c00133b2d1a334"
+  },
+  {
+    "source": "icon_db.png",
+    "destination": "assets\\images\\icon_db.png",
+    "sha256": "0a78c0981889f47363a95bb3241086af7a5c1fa7757f65623396297cba69e99b"
+  },
+  {
+    "source": "icon_extraction.png",
+    "destination": "assets\\images\\icon_extraction.png",
+    "sha256": "f2495b95540f725d912ffbb0c2b92a76c49a84e837e8372f3cef36b994604767"
+  },
+  {
+    "source": "icon_extraction_ctrl.png",
+    "destination": "assets\\images\\icon_extraction_ctrl.png",
+    "sha256": "f2495b95540f725d912ffbb0c2b92a76c49a84e837e8372f3cef36b994604767"
+  },
+  {
+    "source": "icon_magnetic.png",
+    "destination": "assets\\images\\icon_magnetic.png",
+    "sha256": "777c55b2d133c18777431bfc8673ea950645053b9b9e6d0a62ff702a8115413c"
+  },
+  {
+    "source": "icon_magnetic_ctrl.png",
+    "destination": "assets\\images\\icon_magnetic_ctrl.png",
+    "sha256": "442f798d40dfd87e1b6600912bfbc6c2c2a8d0ccffa39334df61522895c0f417"
+  },
+  {
+    "source": "icon_range.png",
+    "destination": "assets\\images\\icon_range.png",
+    "sha256": "7708b8a3712dba375a2944d3a3eec1832ecc81397c6f19886636cbd63bafee11"
+  },
+  {
+    "source": "icon_recall.png",
+    "destination": "assets\\images\\icon_recall.png",
+    "sha256": "dc37f8b0a823fe368752c6b5f8c52c34fd0f61041d258a4eef3cb943cb081902"
+  },
+  {
+    "source": "icon_rf.png",
+    "destination": "assets\\images\\icon_rf.png",
+    "sha256": "7926f3b7cf96830cd719e90e735a656dcb14242c40e4d4c2a2e67a5e0296b5e7"
+  },
+  {
+    "source": "icon_rf_ctrl.png",
+    "destination": "assets\\images\\icon_rf_ctrl.png",
+    "sha256": "7926f3b7cf96830cd719e90e735a656dcb14242c40e4d4c2a2e67a5e0296b5e7"
+  },
+  {
+    "source": "icon_scale.png",
+    "destination": "assets\\images\\icon_scale.png",
+    "sha256": "074bdd183306432133b8939626a924776f9b3917c0cc324d6d78dacfe97d628b"
+  },
+  {
+    "source": "icon_settings.png",
+    "destination": "assets\\images\\icon_settings.png",
+    "sha256": "6eec61be5d898691dd61167e9545efe4115a670dbcc0f6870b1c824fa3491f0e"
+  },
+  {
+    "source": "icon_snapshot.png",
+    "destination": "assets\\images\\icon_snapshot.png",
+    "sha256": "4780a809c7a053aa579c7b87f378cdf705dd34b0c855a58eb6954c18b42a642f"
+  },
+  {
+    "source": "icon_transport.png",
+    "destination": "assets\\images\\icon_transport.png",
+    "sha256": "85263554e6ad9bf1f3ea3e0d126888cff1e27b5f4ed23675112696eb1e94ac75"
+  },
+  {
+    "source": "icon_transport_ctrl.png",
+    "destination": "assets\\images\\icon_transport_ctrl.png",
+    "sha256": "85263554e6ad9bf1f3ea3e0d126888cff1e27b5f4ed23675112696eb1e94ac75"
+  },
+  {
+    "source": "icon_vac.png",
+    "destination": "assets\\images\\icon_vac.png",
+    "sha256": "b176883316fc814542dba97e73c1f6faf639fe0e0094476b39e6457479ed830b"
+  },
+  {
+    "source": "MagneticFieldControllerWindow.py",
+    "destination": "python\\app\\MagneticFieldControllerWindow.py",
+    "sha256": "fb8f068df19e142a2effd09c6de734366e2686cf3152185558c02bdcd063dcef"
+  },
+  {
+    "source": "MagneticFieldMonitoringWindow.py",
+    "destination": "python\\app\\MagneticFieldMonitoringWindow.py",
+    "sha256": "f1230df9f3331157c1392b11e2dad84992d573b1bed8be03f6a51a53d4228750"
+  },
+  {
+    "source": "main.py",
+    "destination": "python\\app\\main.py",
+    "sha256": "e541726ccf5e684cf94f168442ab913e25a9aa3ad79f9b8ac7fabbdb2d7f6c58"
+  },
+  {
+    "source": "main1.py",
+    "destination": "archive\\legacy_scripts\\main1.py",
+    "sha256": "e541726ccf5e684cf94f168442ab913e25a9aa3ad79f9b8ac7fabbdb2d7f6c58"
+  },
+  {
+    "source": "main_control_gui.py",
+    "destination": "python\\app\\main_control_gui.py",
+    "sha256": "7389c6365de13ee7fdcc12f9546c30b8fed3d34ea03847f846004afd8e781cab"
+  },
+  {
+    "source": "main_control_gui1.py",
+    "destination": "archive\\legacy_scripts\\main_control_gui1.py",
+    "sha256": "375d3d4c0725aaed7d304792ea0c6c461118993b5a9d4117aaa627b11288d65f"
+  },
+  {
+    "source": "manual_control_tab.py",
+    "destination": "python\\app\\manual_control_tab.py",
+    "sha256": "d83f093978c0c8f93fd9f896bde5a76f74f4d561da071ba1971c7de38102f817"
+  },
+  {
+    "source": "MF_12.lvlib",
+    "destination": "archive\\labview\\MF_12.lvlib",
+    "sha256": "51ebe23f4bef4ded8afbe4dde18107efdb285d582d6c2851caf1181daf1af2cc"
+  },
+  {
+    "source": "Multiple_Ramps_Trimming_Coil.vi",
+    "destination": "archive\\labview\\Multiple_Ramps_Trimming_Coil.vi",
+    "sha256": "7cd624eb8434ba304777731e6b89ec8b3683d87acd62a13fc7ae717246d5ad87"
+  },
+  {
+    "source": "multi_tc_sequence_tab.py",
+    "destination": "python\\app\\multi_tc_sequence_tab.py",
+    "sha256": "386d387518f662417216207b12111bf6387a65818114cf966bdf23088d126e85"
+  },
+  {
+    "source": "neon_style.py",
+    "destination": "python\\app\\neon_style.py",
+    "sha256": "cc7e7a183f64be894e34c5898c3378bfd9cc14839462e83ca29b4bbf0d345838"
+  },
+  {
+    "source": "new meter_10_6_2025.py",
+    "destination": "archive\\legacy_scripts\\new meter_10_6_2025.py",
+    "sha256": "729537882594f6ede962c519c1cc35d751702c1003189a6f9c5966c98449e630"
+  },
+  {
+    "source": "New Text Document (2).txt",
+    "destination": "docs\\legacy\\New Text Document (2).txt",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "source": "New Text Document.txt",
+    "destination": "docs\\legacy\\New Text Document.txt",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "source": "pid_axis_trend_plot.py",
+    "destination": "python\\app\\pid_axis_trend_plot.py",
+    "sha256": "a2d05f456a3232b945a432dc2260e9f158cc67299ab235e883f4a0d2ad0e2563"
+  },
+  {
+    "source": "pid_beam_buffer.py",
+    "destination": "python\\app\\pid_beam_buffer.py",
+    "sha256": "7cd3499628510cc4517904c555b89d97fcf9a26b35e9c8b68b9195ffe4ba5981"
+  },
+  {
+    "source": "pid_controller.py",
+    "destination": "python\\app\\pid_controller.py",
+    "sha256": "5346c20f3a6e69511a150e3de03a0a789e182cbe52ecaf0b706ed6be8e9ad901"
+  },
+  {
+    "source": "pid_decision_log.py",
+    "destination": "python\\app\\pid_decision_log.py",
+    "sha256": "f99fe279d46b38e69a25ab62b84db0b980c2bf9342d63ef9a85bb0ec0e96f67d"
+  },
+  {
+    "source": "pid_decision_logs",
+    "destination": "runtime\\pid_decision_logs",
+    "sha256": null
+  },
+  {
+    "source": "pid_ga_control_tab.py",
+    "destination": "python\\app\\pid_ga_control_tab.py",
+    "sha256": "2e2c4b7d38e64d32635dcc4aa012f1de5cb14c6c18c9880e0f8f82ff1b64e220"
+  },
+  {
+    "source": "PID_GA_Two_Tabs_Update",
+    "destination": "archive\\previous_versions\\PID_GA_Two_Tabs_Update",
+    "sha256": null
+  },
+  {
+    "source": "PID_GA_Two_Tabs_Update.zip",
+    "destination": "archive\\update_bundles\\PID_GA_Two_Tabs_Update.zip",
+    "sha256": "91be9ca9b1b37be884d110c43441634b063b20cfe8cc7bac0d81d0cec18b9c9d"
+  },
+  {
+    "source": "pid_logs",
+    "destination": "runtime\\pid_logs",
+    "sha256": null
+  },
+  {
+    "source": "PID_Paper_Adaptive_Direction_Update",
+    "destination": "archive\\previous_versions\\PID_Paper_Adaptive_Direction_Update",
+    "sha256": null
+  },
+  {
+    "source": "PID_Single_Loop_Update_v1_1",
+    "destination": "archive\\previous_versions\\PID_Single_Loop_Update_v1_1",
+    "sha256": null
+  },
+  {
+    "source": "PID_Single_Loop_Update_v1_1.zip",
+    "destination": "archive\\update_bundles\\PID_Single_Loop_Update_v1_1.zip",
+    "sha256": "c0c478b3d15a297cae63899a23ea048ce1f97380fdca5621e7dc82a683da561c"
+  },
+  {
+    "source": "pid_sqlite_logger.py",
+    "destination": "python\\app\\pid_sqlite_logger.py",
+    "sha256": "3dcb6fa4b7397a0d619d705b3a7797dc7383ecc822803241627af137c1e55204"
+  },
+  {
+    "source": "portal_source.mp4",
+    "destination": "assets\\videos\\portal_source.mp4",
+    "sha256": "7aaf5f3a443aa0e4c04f5a68f754099fc64e6e7d46fdb28e01cd5cc3d9cac275"
+  },
+  {
+    "source": "Ramp_W_T_C.vi",
+    "destination": "archive\\labview\\Ramp_W_T_C.vi",
+    "sha256": "f1dbe65beab9664db316962f9057cee970c21dd69527ee8ab64545950c61beb0"
+  },
+  {
+    "source": "README_ADAPTIVE_PID_UPDATE.md",
+    "destination": "docs\\legacy\\README_ADAPTIVE_PID_UPDATE.md",
+    "sha256": "71d22da22c8351370d19cd680a144d5ab5ada4209c1d24dd19e5118fb00f4093"
+  },
+  {
+    "source": "README_MODULAR_CONTROLLER.md",
+    "destination": "docs\\legacy\\README_MODULAR_CONTROLLER.md",
+    "sha256": "e0c1b795a3cf887019e667806583cdde942f112f14050cd53aca977e0404ab73"
+  },
+  {
+    "source": "remove_ga_25_percent_patch.py",
+    "destination": "archive\\legacy_scripts\\remove_ga_25_percent_patch.py",
+    "sha256": "019b911ee3f42419b19373c2b048cfe5a87179b6507dc869a1a8e724e4e63860"
+  },
+  {
+    "source": "ScaleCalWindow.py",
+    "destination": "python\\app\\ScaleCalWindow.py",
+    "sha256": "e9e720faba3024822097e9af09b1481e8b88d86e7c0fa389a22aeb7fd0141758"
+  },
+  {
+    "source": "scale_cal_editor.py",
+    "destination": "archive\\legacy_scripts\\scale_cal_editor.py",
+    "sha256": "ca4839fe116969cc31ae10a34666a8d3abda88e6d39fe06848c6e62e2e9a619e"
+  },
+  {
+    "source": "scaling.py",
+    "destination": "python\\app\\scaling.py",
+    "sha256": "6f5c2aae8d6b6c87cc19670f07095e37b0ec82ee1bb1c6ef78b57cabcdf0517a"
+  },
+  {
+    "source": "scaling_curves.xlsx",
+    "destination": "archive\\reference_data\\scaling_curves.xlsx",
+    "sha256": "24b9b62b67613470b94890f29cb7e61da05603d409c48b02dde1d8f4bf73866e"
+  },
+  {
+    "source": "sequence_control_tab.py",
+    "destination": "python\\app\\sequence_control_tab.py",
+    "sha256": "44d1ca2c369c7a00271e1cc343d2560c58d7757551f75a0991b90b1b0cba5278"
+  },
+  {
+    "source": "SettingsDialog.py",
+    "destination": "python\\app\\SettingsDialog.py",
+    "sha256": "398cf9814360bc927eb7652b7a369035be267ee4549419c72680b68b8a402a4d"
+  },
+  {
+    "source": "SHA256SUMS.txt",
+    "destination": "docs\\legacy\\SHA256SUMS.txt",
+    "sha256": "603ce4489451ea12c9fa39b28ec0420f0ecd8a4b2d105d0193fb4fb147341202"
+  },
+  {
+    "source": "SmallScreenMagneticBeam.py",
+    "destination": "python\\app\\SmallScreenMagneticBeam.py",
+    "sha256": "8beb9f72117a26e1d85711b1809fcb1ba7883dede2c9de301656e2bac19a7763"
+  },
+  {
+    "source": "snapshots",
+    "destination": "runtime\\snapshots",
+    "sha256": null
+  },
+  {
+    "source": "snapshot_recall_qt.py",
+    "destination": "python\\app\\snapshot_recall_qt.py",
+    "sha256": "8ac81ee8845d6fa4cd035e87e5e1687dd161f6f15774836f3c4271a61b8f8afb"
+  },
+  {
+    "source": "snapshot_save_qt.py",
+    "destination": "python\\app\\snapshot_save_qt.py",
+    "sha256": "144d69ab8640ad3bd18d28dc18cc17d8f3fb7f0234a1c464e3ed4a381c1333e4"
+  },
+  {
+    "source": "SourceExtractionMonitoringWindow.py",
+    "destination": "python\\app\\SourceExtractionMonitoringWindow.py",
+    "sha256": "4812d4bd0f31a5bc9341739b28883bc73ba120358ceeb72c3454656dfa374767"
+  },
+  {
+    "source": "SourceExtractionMonitoringWindow_working.py",
+    "destination": "archive\\legacy_scripts\\SourceExtractionMonitoringWindow_working.py",
+    "sha256": "d4b0e9aa3e95d2ecd5d0c74c21f3efd96ca400b43e61d0000856f1e8769f7966"
+  },
+  {
+    "source": "source_extraction_bg.png",
+    "destination": "assets\\images\\source_extraction_bg.png",
+    "sha256": "a42b995219f8a8b7f0dd2c7727e343ace95232cbff8c7e0d4c6835314a6a8fc4"
+  },
+  {
+    "source": "SpinWheelCalWindow.py",
+    "destination": "archive\\legacy_scripts\\SpinWheelCalWindow.py",
+    "sha256": "df8e4bea339129eaabc1350170b90ffa4aef1c7cf38108a4cf2f93f5528a8006"
+  },
+  {
+    "source": "sqlite_logger.py",
+    "destination": "python\\app\\sqlite_logger.py",
+    "sha256": "c895c2f954c6017af88df5e9a06e08293db7935e8843f1830b81301cefba337b"
+  },
+  {
+    "source": "sqlite_viewer_qt.py",
+    "destination": "python\\app\\sqlite_viewer_qt.py",
+    "sha256": "1f86151a7852848ee92b8e73bfee4116defd0bdea83183955add8134a3e7492f"
+  },
+  {
+    "source": "sqlite_viewer_report.py",
+    "destination": "python\\app\\sqlite_viewer_report.py",
+    "sha256": "2fbe395d56021e452b89839d298cee1b4a0e9aae27ddd64199a113fe0934a682"
+  },
+  {
+    "source": "sqlite_viewer_scaling.py",
+    "destination": "python\\app\\sqlite_viewer_scaling.py",
+    "sha256": "01c7c07b01e4609ad9e71a4264d90a74c564b4bca1fb4a46b2c18745d7d88e06"
+  },
+  {
+    "source": "sqlite_view_stack.pdf",
+    "destination": "archive\\reference_data\\sqlite_view_stack.pdf",
+    "sha256": "acf2dbf3de65270ef32caf7ec1a6dd7c38ac46af23d53ec330a2950476103b29"
+  },
+  {
+    "source": "static",
+    "destination": "assets\\web\\static",
+    "sha256": null
+  },
+  {
+    "source": "testing_Trim_Coils.aliases",
+    "destination": "archive\\labview\\testing_Trim_Coils.aliases",
+    "sha256": "ead7eacc7638763885dfb62e842cc20e4abd6a4c854948a1f88e1b0ff9ad5833"
+  },
+  {
+    "source": "testing_Trim_Coils.lvlps",
+    "destination": "archive\\labview\\testing_Trim_Coils.lvlps",
+    "sha256": "d9fce01f61793c4231d3a972b9e1ccad143c0de00b0021d6544d4069fdfcdbe6"
+  },
+  {
+    "source": "testing_Trim_Coils.lvproj",
+    "destination": "archive\\labview\\testing_Trim_Coils.lvproj",
+    "sha256": "e27a79e190ebc96f3685db0bf8bb62cc16199245942ea31fb55954ff629c6118"
+  },
+  {
+    "source": "test_pid_modules.py",
+    "destination": "archive\\legacy_scripts\\test_pid_modules.py",
+    "sha256": "e4d55175ee089f359f36fd318afc26910e071275764291a4766cb27567d3fec4"
+  },
+  {
+    "source": "trimcoil_snapshots.xlsx",
+    "destination": "runtime\\snapshots\\trimcoil_snapshots.xlsx",
+    "sha256": "7887766ee88cf1b748ab06f2d825e6bf37b26e26a101dbf71c4368a8bceeb67d"
+  },
+  {
+    "source": "Trimming_Coil_Command.vi",
+    "destination": "archive\\labview\\Trimming_Coil_Command.vi",
+    "sha256": "c916a73b91be6b1b1cb0bcc8693dd27cfee0f7e6233b2c0e41d7cdf72f5a3a6e"
+  },
+  {
+    "source": "Trimming_Coil_Monitor.vi",
+    "destination": "archive\\labview\\Trimming_Coil_Monitor.vi",
+    "sha256": "32f6004fad84b9e770bf4e4c46228a4f2a51d5070288d578136a7c6011a0eab5"
+  },
+  {
+    "source": "Trimming_Coil_Ramps.vi",
+    "destination": "archive\\labview\\Trimming_Coil_Ramps.vi",
+    "sha256": "182c38c94005c620ae16ea92454fdff7ce4e9b2f88f8fd3a8ca60d3715d8d225"
+  },
+  {
+    "source": "untitled12.py",
+    "destination": "archive\\legacy_scripts\\untitled12.py",
+    "sha256": "4dc0b75daf939e7009b89b9f91c51f0ac1b221599ffd9612c416b9f8274a33b0"
+  },
+  {
+    "source": "VacuumBeamMonitoringWindow.py",
+    "destination": "python\\app\\VacuumBeamMonitoringWindow.py",
+    "sha256": "f603d3082e656a6ee5999c6b49bfd9538fce0ba9cd3bfa71741b2c494a178fa2"
+  },
+  {
+    "source": "VacuumBeamMonitoringWindow1.py",
+    "destination": "archive\\legacy_scripts\\VacuumBeamMonitoringWindow1.py",
+    "sha256": "25cb909ddd7623eb2a4890ba68f745dd1a67a5b6ef4633097fe741accd976b5a"
+  },
+  {
+    "source": "VacuumBeamMonitoringWindow3.py",
+    "destination": "archive\\legacy_scripts\\VacuumBeamMonitoringWindow3.py",
+    "sha256": "ff8ccc0e5b555fc695da6e9598c8009d0c9ddbb64f860e96bc8340ff151ecd69"
+  },
+  {
+    "source": "VacuumBeamMonitoringWindowO.py",
+    "destination": "archive\\legacy_scripts\\VacuumBeamMonitoringWindowO.py",
+    "sha256": "3282f30bb90a62efbd744cb546a895bcf9bef51b2e2528fa287b54495594291e"
+  },
+  {
+    "source": "VacuumBeamMonitoringWindow_working.py",
+    "destination": "archive\\legacy_scripts\\VacuumBeamMonitoringWindow_working.py",
+    "sha256": "c785a99d73a0af5fb5d0ce2770851f8d183f8e9f3619986e1d85687c3ec89de4"
+  },
+  {
+    "source": "vacuum_beam_bg.png",
+    "destination": "assets\\images\\vacuum_beam_bg.png",
+    "sha256": "2ca6e63f031ecc8a6774c9c3d0eca4facd963463a9e9414a5ed3d71357aa08ac"
+  },
+  {
+    "source": "vacuum_beam_bg1.png",
+    "destination": "assets\\images\\vacuum_beam_bg1.png",
+    "sha256": "c52bf6d1c7c0f7decc611e8683a448e2be3e59be3a15b822e1bbe0ec1c1d7a98"
+  },
+  {
+    "source": "vacuum_beam_bg2.png",
+    "destination": "assets\\images\\vacuum_beam_bg2.png",
+    "sha256": "0800a096cd72b4fbddded7666d85693641f9b66c643146582bb6865f070d2ac5"
+  },
+  {
+    "source": "vacuum_beam_bg4.png",
+    "destination": "assets\\images\\vacuum_beam_bg4.png",
+    "sha256": "c55de5f4a268623755b279d7467f6bf5cae2289da274eca0392e75fd855bf986"
+  },
+  {
+    "source": "VERIFICATION.txt",
+    "destination": "docs\\legacy\\VERIFICATION.txt",
+    "sha256": "c1f0cbdd86c4e9abd19d2b3332495c380fb7373b4bcfbdddb0bf4963eab85e2a"
+  },
+  {
+    "source": "web-app.py",
+    "destination": "archive\\legacy_scripts\\web-app.py",
+    "sha256": "bb8f90a8a81e79260f3621b23d2a984c23cdde475c1ecdddcdd8d09d9e70117a"
+  },
+  {
+    "source": "web_app.py",
+    "destination": "python\\tools\\web_app.py",
+    "sha256": "bb8f90a8a81e79260f3621b23d2a984c23cdde475c1ecdddcdd8d09d9e70117a"
+  },
+  {
+    "source": "zmq_field_controller_sender.py",
+    "destination": "archive\\legacy_scripts\\zmq_field_controller_sender.py",
+    "sha256": "d53d2697099118b01d76de745d36f99efb17e57c3d12e710b1596fabdecce5b6"
+  },
+  {
+    "source": "zmq_labview_simulator.py",
+    "destination": "archive\\legacy_scripts\\zmq_labview_simulator.py",
+    "sha256": "5e7621a58aa24179d6fcd5d385114182aa0f905e88cbf89fb74d4d2524ab5128"
+  },
+  {
+    "source": "zmq_rep_server.py",
+    "destination": "python\\app\\zmq_rep_server.py",
+    "sha256": "2f9515923e9b24c8c873a65d7949b83014247fc28b6538729bae6157a3a1fa92"
+  },
+  {
+    "source": "~$trimcoil_snapshots.xlsx",
+    "destination": "archive\\reference_data\\~$trimcoil_snapshots.xlsx",
+    "sha256": "baf64bc597304c442ce757af77719fd1ddb50433243f33d34a0942105f7068c2"
+  },
+  {
+    "source": "BO\\README.md",
+    "destination": "docs\\BO.md",
+    "sha256": "ed89b59dfbea865502d521fed8811604932d1dbd839569453ccaf6f10f691b59"
+  },
+  {
+    "source": "BO\\requirements.txt",
+    "destination": "archive\\legacy_requirements\\bo_requirements.txt",
+    "sha256": "98dd4ff75edd15c3f6f6b0732e0fbedbbc9b6ee00f20cb4b4c97fad42d697952"
+  },
+  {
+    "source": "BO\\test_bo_integration.py",
+    "destination": "tests\\bo\\test_bo_integration.py",
+    "sha256": "40417336c9426ea36a5caccdf26cd2afe36aeeeaed10d04603d0b750f6f52f57"
+  },
+  {
+    "source": "BO\\test_experiment_log.py",
+    "destination": "tests\\bo\\test_experiment_log.py",
+    "sha256": "5ee1fe52c133b331b14e8ab05fe311fd7a078eb9c40c6ff33b5e44e92c1d323b"
+  },
+  {
+    "source": "BO\\test_ui.py",
+    "destination": "tests\\bo\\test_ui.py",
+    "sha256": "1708e288ad67a70f9e1b4997c6532158e8475a81ab095f645db27a28a1bfc26c"
+  },
+  {
+    "source": "BO\\ui_preview.png",
+    "destination": "docs\\images\\bo_ui_preview.png",
+    "sha256": "b86c341973a9cdf4cbc6fa626c2b6671f4fade7c234c5539d12e0d51d2d100a3"
+  },
+  {
+    "source": "BO",
+    "destination": "python\\app\\BO",
+    "sha256": null
+  }
+]

@@ -1,0 +1,10 @@
+# Full ExperimentalGUI environment: GUI, existing ZMQ backend, data tools and BO.
+# Use 64-bit Python 3.11-3.13. No C++ build or Combination checkout is required.
+PyQt6>=6.6,<7
+pyqtgraph>=0.13.7,<0.15
+numpy>=1.26,<3
+pandas>=2.2,<4
+matplotlib>=3.8,<4
+openpyxl>=3.1,<4
+pyzmq>=25,<28
+-r requirements-optimization.txt

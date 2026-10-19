@@ -1,0 +1,4 @@
+# PID + BO optimizer dependencies; installed by the default requirements.txt.
+torch>=2.4,<3
+botorch>=0.12,<1
+gpytorch>=1.13,<2

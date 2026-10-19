@@ -1,0 +1,4 @@
+# Optional historical web viewer; not started by the desktop launcher.
+-r requirements.txt
+fastapi>=0.110,<1
+uvicorn>=0.29,<1

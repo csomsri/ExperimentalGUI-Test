@@ -1,5 +1,9 @@
 .venv/
 venv/
+.venv-ubuntu/
+.qa-deps/
+runtime/**
+!runtime/README.md
 __pycache__/
 *.pyc
 .env

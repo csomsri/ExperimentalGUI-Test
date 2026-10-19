@@ -1,2 +1,0 @@
-generation,candidate,kp,ki,kd,fitness,j_track,j_ss,j_move,j_sat,j_osc,safety_penalty,phase,reason,duration_s,scored_samples,total_samples,max_abs_error_nA,max_tc_excursion_a
-1,1,0.8,0.1,0.1,1004253.5,1000.0,1000.0,1000.0,1.0,1000.0,1000000.0,ABORTED,MEASURED TC EXCURSION FROM REFERENCE 1.232 A EXCEEDED 0.5 A,0.75,0,0,0.0,0.0
