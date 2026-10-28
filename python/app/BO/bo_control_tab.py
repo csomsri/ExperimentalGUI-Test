@@ -58,11 +58,21 @@ class BOControlTab(QWidget):
         self.status = QLabel('Ready. Arm output on the PID page, then arm BO here.')
         self.status.setWordWrap(True)
         layout.addWidget(self.status)
-        self.history = QTableWidget(0, 8)
-        self.history.setHorizontalHeaderLabels(['Trial', 'Source', 'Kp', 'Ki', 'Kd', 'Cost', 'Valid', 'Reason'])
+        self.history = QTableWidget(0, 12)
+        self.history.setHorizontalHeaderLabels(['Trial', 'Source', 'Kp', 'Ki', 'Kd', 'Cost', 'Valid', 'Reason',
+            'GP predicted cost', 'GP SD', 'Predictive 95%', 'P(improve)'])
         self.history.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         self.history.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
         layout.addWidget(self.history)
+        self.history.itemSelectionChanged.connect(self._refresh_statistics)
+        self.statistics_detail = QLabel('Select a trial to inspect its GP decision statistics.')
+        self.statistics_detail.setWordWrap(True)
+        layout.addWidget(self.statistics_detail)
+        from .gp_statistics_widget import GPStatisticsPlot
+        self.prediction_plot = GPStatisticsPlot()
+        self.candidate_plot = GPStatisticsPlot()
+        layout.addWidget(self.prediction_plot)
+        layout.addWidget(self.candidate_plot)
         self.timer = QTimer(self)
         self.timer.timeout.connect(self._refresh)
         self.timer.start(200)
@@ -178,12 +188,19 @@ class BOControlTab(QWidget):
             self.history.setRowCount(len(records))
             for row, candidate in enumerate(records):
                 record = self.session.results[row] if row < len(self.session.results) else {}
-                values = (row + 1, record.get('source', self.session.proposal_source),
+                decision = self.session.decisions[row] if row < len(self.session.decisions) else {}
+                stats = (decision.get('selected') or [{}])[0]
+                interval = (f"[{stats['predictive_low']:.4g}, {stats['predictive_high']:.4g}]"
+                            if stats else '—')
+                values = (row + 1, decision.get('source', 'baseline'),
                           candidate.gains.kp, candidate.gains.ki, candidate.gains.kd,
-                          record.get('cost', candidate.fitness), record.get('valid', 'Pending'), record.get('reason', ''))
+                          record.get('cost', candidate.fitness), record.get('valid', 'Pending'), record.get('reason', ''),
+                          stats.get('predicted_cost', '—'), stats.get('posterior_sd', '—'), interval,
+                          f"{stats['probability_improvement']:.1%}" if stats else '—')
                 for col, value in enumerate(values):
                     self.history.setItem(row, col, QTableWidgetItem(
                         'Pending' if value is None else (f'{value:.6g}' if isinstance(value, (float, int)) else str(value))))
+            self._refresh_statistics()
         if own_active:
             self.status.setText(('BO validation — ' if self.validation else 'BO search — ')
                                 + p.ga_status_label.text().replace('AUTOMATIC GA', 'BO')
@@ -244,6 +261,50 @@ class BOControlTab(QWidget):
                 getattr(self.pid_tab, name).setValue(value)
             self.pid_tab.ga_recovery_scope_combo.setCurrentIndex(self.saved_scope)
             self.saved_ga_settings = None
+
+    def _refresh_statistics(self):
+        if self.session is None or not hasattr(self, 'statistics_detail'):
+            return
+        from .optimization.decision_statistics import comparison
+        rows = self.session.decisions
+        index = self.history.currentRow()
+        index = index if 0 <= index < len(rows) else len(rows) - 1
+        if index < 0:
+            return
+        selected = rows[index]
+        stats = (selected.get('selected') or [{}])[0]
+        points = []
+        for i, decision in enumerate(rows):
+            prediction = (decision.get('selected') or [{}])[0]
+            if not prediction:
+                continue
+            candidate = self.session.population[i]
+            observed = candidate.fitness if candidate.valid and candidate.evaluated else None
+            points.append((i+1, prediction['predicted_cost'], prediction['predictive_low'],
+                           prediction['predictive_high'], observed, True))
+        self.prediction_plot.set_points('Pre-trial prediction (cyan), measured cost (orange ×), 95% predictive intervals',
+                                       'Trial number · cost in original units', points)
+        samples = selected.get('candidates', [])
+        self.candidate_plot.set_points('Candidate comparison: GP mean and 95% credible intervals; chosen point cyan',
+            'Kp projection; Ki and Kd vary across samples (not a fixed-gain slice)',
+            [(r['values'][0], r['predicted_cost'], r['credible_low'], r['credible_high'], None, r['selected']) for r in samples])
+        if not stats:
+            self.statistics_detail.setText(f"Trial {index+1}: " + selected.get('diagnostics_error',
+                selected.get('unavailable_reason', 'GP statistics unavailable.')))
+            return
+        candidate = self.session.population[index]
+        result = comparison(stats, candidate.fitness, candidate.valid) if candidate.evaluated else {}
+        suffix = (f" Prediction error {result['prediction_error']:.4g}; inside predictive interval: "
+                  f"{result['inside_predictive_95']}." if result else '')
+        self.statistics_detail.setText(
+            f"Trial {index+1} · {selected.get('training_count')} valid training trials · "
+            f"predicted cost {stats['predicted_cost']:.5g}, GP SD {stats['posterior_sd']:.4g}; "
+            f"95% credible interval [{stats['credible_low']:.4g}, {stats['credible_high']:.4g}]; "
+            f"predictive SD {stats['predictive_sd']:.4g}; learned noise variance {stats['learned_noise_variance']:.4g}. "
+            f"P(improve) {stats['probability_improvement']:.1%}, expected improvement {stats['expected_improvement']:.4g}; "
+            f"qLogEI {stats['acquisition_log_ei']:.4g} (not a probability), reference cost {stats['reference_cost']:.4g}. "
+            'Predictions use proposed gains; PID rounds to six decimals. Intervals condition on the fitted GP; '
+            'drift and calibration errors are not included.' + suffix)
 
     def _build_workspace(self, layout):
         from pid_ga_control_tab import TrendPlot

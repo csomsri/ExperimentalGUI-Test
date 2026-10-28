@@ -17,7 +17,8 @@ def main():
     temporary = ROOT / 'runtime' / 'test-tmp'
     temporary.mkdir(parents=True, exist_ok=True)
     tempfile.tempdir = str(temporary)
-    suites = ['tests.test_layout', 'tests.bo.test_bo_integration', 'tests.bo.test_experiment_log']
+    suites = ['tests.test_layout', 'tests.bo.test_bo_integration', 'tests.bo.test_experiment_log',
+              'tests.bo.test_gp_statistics']
     if args.ui:
         suites.append('tests.bo.test_ui')
     suite = unittest.defaultTestLoader.loadTestsFromNames(suites)

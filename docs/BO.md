@@ -29,6 +29,49 @@ The BO tab has its own beam/error/TC response plots and best-so-far cost graph, 
 
 ## Verification
 
+### GP decision statistics
+
+New runs record pre-trial statistics without changing the acquisition function,
+gain selection, training noise model, or run restrictions. In the BO trial table,
+select a row to see its predicted cost, posterior SD, credible and predictive
+intervals, learned observation-noise variance, probability of improvement,
+analytic marginal expected improvement, and Monte Carlo qLogEI acquisition value.
+The acquisition value is a ranking score, not a probability. PI and EI use the
+best observed valid cost as a fixed reference, matching the current qLogEI
+baseline; uncertainty in that reference is not integrated out.
+
+The first plot compares predictions made before measurement with later valid
+measurements. Bars are 95% predictive intervals. The second shows a seeded sample
+of 64 alternative gain vectors and the chosen vector, with GP mean and 95%
+credible intervals projected against Kp. Ki and Kd vary: this is not a fixed-gain
+slice or an exhaustive picture of the acquisition search.
+
+Each BO run folder includes:
+
+- `gp_decisions.csv`: linked pre-trial statistics and later measured cost,
+  prediction error, standardized error and interval coverage. Baseline/Sobol
+  rows have unavailable GP statistics, not zero uncertainty.
+- `gp_models/model_###.json`: the exact proposing model state, training gains,
+  costs and trial IDs, seed, fitting warnings, timings and interval definitions.
+  Raw model state uses internal transformed coordinates; exported cost
+  predictions, SDs and noise variance use original cost units.
+- `gp_candidates/decision_###.csv`: the chosen proposal and sampled alternatives.
+- `gp_calibration.csv`: valid held-out prediction errors, running RMSE and
+  empirical 95% predictive-interval coverage. Coverage is descriptive and can
+  be unstable with few adaptively selected trials.
+- `trials.csv` and `events.jsonl`: linked decision/result statistics as nested
+  JSON, in addition to the existing measured score components and response data.
+
+Statistics use the exact GP fitted for the proposal and are saved before PID
+starts that trial. Predictions refer to proposed gains; the PID fields can round
+executed gains to six decimal places, and both vectors are recorded. Diagnostics
+are best effort: failures are reported without stopping BO or replacing gains.
+Plots and predictions condition on fitted hyperparameters and do not include
+calibration error or hardware drift. Predictive intervals add the GP's inferred
+shared observation noise; per-trial measured cost variance is not yet supplied.
+
+No statistics are retroactively inferred for older runs.
+
     python scripts/run_tests.py
 
 These tests use deterministic proposal substitutes and fake readbacks; they require neither Qt, BO dependencies nor hardware. Full application UI checks require PyQt6 and the application's normal dependencies. Exercising actual GP fitting additionally requires requirements-optimization.txt.

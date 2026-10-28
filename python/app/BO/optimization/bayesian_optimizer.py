@@ -68,6 +68,7 @@ class BotorchBayesianOptimizer:
         self._torch_ready = False
         self._botorch_ready = False
         self._device = "cpu"
+        self.last_decision = None
 
     @property
     def parameters(self) -> tuple[OptimizationParameter, ...]:
@@ -94,6 +95,9 @@ class BotorchBayesianOptimizer:
             raise ValueError("batch_size must be positive")
         self._require_torch()
         safe_observations = self.safe_observations
+        self.last_decision = dict(source='sobol', training_count=len(safe_observations),
+                                  statistics_available=False,
+                                  unavailable_reason='Sobol initialization does not use a GP decision.')
         if len(safe_observations) < self.initial_safe_trials:
             return self._propose_sobol_batch(batch_size)
         return self._propose_model_guided_batch(batch_size, safe_observations)
@@ -268,6 +272,9 @@ class BotorchBayesianOptimizer:
         batch_size: int,
         safe_observations: Sequence[OptimizationObservation],
     ) -> list[OptimizationCandidate]:
+        import time
+        import warnings
+        started = time.monotonic()
         self._require_botorch()
         bounds = self._bounds_tensor()
         train_x, train_y = build_training_tensors(
@@ -276,12 +283,13 @@ class BotorchBayesianOptimizer:
             torch=self._torch,
             tensor_options=self._tensor_options(),
         )
-        model = fit_single_task_gp(
-            train_x=train_x,
-            train_y=train_y,
-            bounds=bounds,
-            dimension=self.parameter_space.dimension,
-        )
+        with warnings.catch_warnings(record=True) as fit_warnings:
+            warnings.simplefilter('always')
+            model = fit_single_task_gp(
+                train_x=train_x, train_y=train_y, bounds=bounds,
+                dimension=self.parameter_space.dimension)
+        fit_s = time.monotonic() - started
+        diagnostics = {}
         candidates = propose_expected_improvement_batch(
             model=model,
             train_y=train_y,
@@ -292,7 +300,16 @@ class BotorchBayesianOptimizer:
             mc_samples=self.mc_samples,
             num_restarts=self.num_restarts,
             raw_samples=self.raw_samples,
+            diagnostics=diagnostics,
         )
+        self.last_decision = dict(diagnostics, source='gp_qlogei',
+            statistics_available=bool(diagnostics.get('selected')),
+            training_count=len(safe_observations), seed=self.seed,
+            training_data=[dict(gains=dict(o.candidate.values), cost=o.score,
+                               trial_index=(o.metadata or {}).get('trial_index')) for o in safe_observations],
+            fit_seconds=fit_s, total_proposal_seconds=time.monotonic() - started,
+            fit_warnings=[str(w.message) for w in fit_warnings],
+            acquisition='qLogExpectedImprovement', parameter_names=list(self.parameter_names))
         return self.parameter_space.candidates_from_tensor_rows(candidates)
 
     def _require_torch(self) -> None:

@@ -23,6 +23,7 @@ class BOPIDAdapter:
         self.proposal_source = 'baseline'
         self.proposed_gains = None
         self.results = []
+        self.decisions = []
         self.executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix='PID-BO')
 
     def initialize(self, seed_gains):
@@ -34,6 +35,8 @@ class BOPIDAdapter:
         self.proposed_gains = dict(kp=seed_gains.kp, ki=seed_gains.ki, kd=seed_gains.kd)
         self.optimizer.parameter_space.validate_candidate(self._vector(seed_gains))
         self.population = [PIDCandidate(seed_gains)]
+        self.decisions = [dict(source=self.proposal_source, statistics_available=False,
+            training_count=0, unavailable_reason='Starting gains are measured before GP fitting.')]
         return self.current_candidate()
 
     @staticmethod
@@ -59,7 +62,8 @@ class BOPIDAdapter:
         candidate.valid = bool(valid and math.isfinite(fitness))
         if candidate.valid:
             self.optimizer.record_observations([
-                OptimizationObservation(self._vector(candidate.gains), float(fitness))
+                OptimizationObservation(self._vector(candidate.gains), float(fitness),
+                                        metadata={'trial_index': candidate.index + 1})
             ])
             if self.best_overall is None or fitness < self.best_overall.fitness:
                 self.best_overall = candidate
@@ -82,8 +86,9 @@ class BOPIDAdapter:
         except Exception as exc:
             raise RuntimeError(f'BO proposal failed: {exc}') from exc
         candidate = PIDCandidate(PIDGains(**proposal.values), index=len(self.population))
-        self.proposal_source = ('sobol' if len(self.optimizer.safe_observations)
-                                < self.optimizer.initial_safe_trials else 'gp_qlogei')
+        decision = self.optimizer.last_decision or dict(source='sobol', statistics_available=False)
+        self.proposal_source = decision['source']
+        self.decisions.append(decision)
         self.proposed_gains = dict(proposal.values)
         self.population.append(candidate)
         return candidate

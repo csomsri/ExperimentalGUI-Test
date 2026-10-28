@@ -4564,6 +4564,10 @@ class PIDGAControlTab(QWidget):
         self._present_candidate(candidate)
         if getattr(self.ga_tuner, 'is_bo', False) and getattr(self, '_bo_log', None) is not None:
             self._bo_log.trial_id = f'{self._bo_log.run_id}:{candidate.index + 1:03d}'
+            try:
+                self._bo_log.decision(self.ga_tuner, candidate)
+            except (OSError, ValueError, TypeError, IndexError) as exc:
+                self._bo_log.error = 'GP decision statistics: ' + str(exc)
             self._bo_event('TRIAL_START', proposed_gains=self.ga_tuner.proposed_gains,
                     applied_gains=dict(kp=candidate.gains.kp, ki=candidate.gains.ki, kd=candidate.gains.kd),
                     source=self.ga_tuner.proposal_source)
