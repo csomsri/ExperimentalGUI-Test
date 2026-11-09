@@ -58,6 +58,7 @@ class ControllerContext(QObject):
 
         count = len(self.channel_names)
         self.actual_values = [0.0] * count
+        self.actual_timestamps = [0.0] * count
 
         # Beam feedback is physically separate from the selected magnetic
         # actuator.  The value is stored in calibrated nA with a monotonic
@@ -205,8 +206,9 @@ class ControllerContext(QObject):
             out.append(self.target(i))
         return out
 
-    def update_actual_values(self, values: Iterable[float]) -> None:
+    def update_actual_values(self, values: Iterable[float], *, fresh: bool = True) -> None:
         incoming = list(values)
+        received = time.monotonic()
         for i in range(min(len(incoming), len(self.actual_values))):
             try:
                 value = float(incoming[i])
@@ -214,6 +216,10 @@ class ControllerContext(QObject):
                 continue
             if math.isfinite(value):
                 self.actual_values[i] = value
+                if fresh:
+                    self.actual_timestamps[i] = received
+            elif fresh:
+                self.actual_timestamps[i] = 0.0
         self.actual_values_changed.emit(list(self.actual_values))
 
     def update_beam_measurement(

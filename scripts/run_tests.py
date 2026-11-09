@@ -18,9 +18,10 @@ def main():
     temporary.mkdir(parents=True, exist_ok=True)
     tempfile.tempdir = str(temporary)
     suites = ['tests.test_layout', 'tests.bo.test_bo_integration', 'tests.bo.test_experiment_log',
-              'tests.bo.test_gp_statistics']
+              'tests.bo.test_gp_statistics', 'tests.bo.test_hybrid_policy',
+              'tests.bo.test_hybrid_rolling', 'tests.bo.test_hybrid_adapter']
     if args.ui:
-        suites.append('tests.bo.test_ui')
+        suites.extend(['tests.bo.test_ui', 'tests.bo.test_hybrid_ui'])
     suite = unittest.defaultTestLoader.loadTestsFromNames(suites)
     return 0 if unittest.TextTestRunner(verbosity=2).run(suite).wasSuccessful() else 1
 

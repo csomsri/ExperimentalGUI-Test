@@ -45,7 +45,7 @@ class ExperimentLog:
                             Path(__file__), *Path(__file__).parent.glob('*.py'),
                             *Path(__file__).parent.joinpath('optimization').glob('*.py')]}
         self.json('run_settings.json', dict(settings, run_id=self.run_id,
-                  schema_version=2, versions=versions, source_sha256=hashes))
+                  schema_version=3, versions=versions, source_sha256=hashes))
         self.event('START')
 
     def json(self, filename, record):
@@ -72,6 +72,13 @@ class ExperimentLog:
                       proposed_gains=tuner.proposed_gains,
                       valid=result.phase.value == 'COMPLETE' and math.isfinite(result.score))
         record['valid'] = record['valid'] and not result.safety_violation
+        record['analysis'] = getattr(tuner, 'analyses', {}).get(result.candidate_number-1, {})
+        analysis = record['analysis']
+        record['failure_category'] = ('hardware_or_data_fault' if not record['valid'] else
+            'performance_failure' if analysis.get('status') == 'FAIL' else
+            'insufficient_data' if analysis.get('status') == 'INSUFFICIENT_DATA' else None)
+        record['role'] = getattr(tuner, 'role', 'candidate')
+        record['objective_version'] = 'october-five-term-v1' if not getattr(tuner, 'validation', False) else 'waveform-diagnostic-only-v1'
         record['gp_statistics'] = {}
         decision = self._decision_rows.get(self.trial_id)
         if decision is not None:

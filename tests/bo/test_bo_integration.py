@@ -15,6 +15,8 @@ class AdapterTests(unittest.TestCase):
     def make_tuner(self, budget=2):
         tuner = BOPIDAdapter(GainBounds(), budget)
         self.addCleanup(tuner.close)
+        tuner.require_tracking = False
+        tuner.interleave_reference = False
         tuner.initialize(PIDGains(1, 0.1, 0.01))
         return tuner
 

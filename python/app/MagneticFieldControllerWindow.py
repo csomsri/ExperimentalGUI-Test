@@ -1481,7 +1481,7 @@ class MagneticFieldControllerWindow(QWidget):
                 except (IndexError, TypeError, ValueError):
                     values.append(self.actual_values[index])
             self.actual_values[:] = values
-            self.context.update_actual_values(values)
+            self.context.update_actual_values(values, fresh=False)
             self._set_live_state(True)
             return
 
@@ -1537,7 +1537,7 @@ class MagneticFieldControllerWindow(QWidget):
             self._set_live_state(False)
             return
 
-        self.context.update_actual_values(self.actual_values)
+        self.context.update_actual_values(self.actual_values, fresh=received_new_packet)
         self._set_live_state(True)
 
     def _update_beam_feedback(self, packet: dict) -> None:

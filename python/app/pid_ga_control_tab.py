@@ -868,6 +868,7 @@ class PIDGAControlTab(QWidget):
         self._ga_saved_gains: PIDGains | None = None
         self._ga_saved_target_limits: tuple[float, float] | None = None
         self._ga_pending_candidate: PIDCandidate | None = None
+        self._clear_candidate_wait()
         self._ga_run_complete = False
         self._ga_abort_after_restore = False
         self._ga_abort_reason = ""
@@ -941,6 +942,11 @@ class PIDGAControlTab(QWidget):
         bo_page, bo_layout = self._new_scroll_page()
         bo_layout.addWidget(self.bo_tab)
         self.control_tabs.addTab(bo_page, "BO AUTO-TUNE")
+        from BO.hybrid_control_tab import HybridControlTab
+        self.hybrid_tab = HybridControlTab(self)
+        hybrid_page, hybrid_layout = self._new_scroll_page()
+        hybrid_layout.addWidget(self.hybrid_tab)
+        self.control_tabs.addTab(hybrid_page, "HYBRID GA + BO")
         self.control_tabs.currentChanged.connect(lambda _index: self._refresh_display())
         outer.addWidget(self.control_tabs)
 
@@ -3724,6 +3730,11 @@ class PIDGAControlTab(QWidget):
     def _pid_step(self) -> None:
         if not self._pid_running:
             return
+        if (self._ga_auto_active and getattr(self.ga_tuner, 'is_bo', False)
+                and self.ga_tuner.validation):
+            self._advance_bo_waveform(time.monotonic())
+            if not self._pid_running:
+                return
         if not self.context.can_write(ControlMode.PID):
             reason = "CONTROL MODE LOST"
             if self._ga_auto_active:
@@ -3981,6 +3992,10 @@ class PIDGAControlTab(QWidget):
                     attempt_restore=True,
                 )
                 return
+            if getattr(self.ga_tuner, 'is_bo', False):
+                self._bo_event('FEEDBACK_AVERAGE', elapsed_s=sample_timestamp-self.ga_evaluator.start_timestamp_s,
+                    snapshot=snapshot, tc_target_a=self.context.target(self._actuator_index),
+                    tc_actual_a=self.context.actual(self._actuator_index))
             update = self.ga_evaluator.observe(
                 timestamp_s=sample_timestamp,
                 beam_nA=actual,
@@ -4450,10 +4465,16 @@ class PIDGAControlTab(QWidget):
         self._ga_abort_after_restore = False
         self._ga_abort_reason = ""
         self._ga_last_result = None
+        self._clear_candidate_wait()
+        self._bo_readiness_key = None
+        self._bo_ready_candidate = None
         self._ga_auto_active = True
         self._ga_sequence_state = "PREPARING"
         self._reset_ga_plot()
         self._create_ga_run_directory(evaluation_config, weights)
+        if getattr(self.ga_tuner, 'is_bo', False) and (self._ga_run_dir is None or self._bo_log is None):
+            self._finalize_automatic_ga(False, 'BO START BLOCKED — EXPERIMENT LOGGING IS UNAVAILABLE')
+            return
         self._set_ga_controls_locked(True)
         self.context.set_mode(ControlMode.GA_TUNING)
         self._present_candidate(candidate)
@@ -4520,11 +4541,22 @@ class PIDGAControlTab(QWidget):
                 from dataclasses import asdict
                 from beam_cal import beam_cal
                 self._bo_log = ExperimentLog(destination, dict(
-                    strategy='BO', parent_search_run_id=self.ga_tuner.parent_search_run_id,
+                    strategy='HYBRID' if getattr(self.ga_tuner, 'is_hybrid', False) else 'BO',
+                    hybrid_approach=getattr(self.ga_tuner, 'approach', None),
+                    hybrid_settings=getattr(self.ga_tuner, 'hybrid_settings', None),
+                    parent_search_run_id=self.ga_tuner.parent_search_run_id,
                     validation=getattr(self.ga_tuner, 'validation', False),
                     trial_budget=self.ga_tuner.budget, seed=self.ga_tuner.optimizer.seed,
                     initial_safe_trials=self.ga_tuner.optimizer.initial_safe_trials,
-                    recovery=self.ga_tuner.recovery,
+                    recovery=self.ga_tuner.recovery, tracking_criteria=asdict(self.ga_tuner.criteria),
+                    objective_version='october-five-term-v1',
+                    training_policy='finite-data-valid-including-performance-failures-v1',
+                    waveform=getattr(self.ga_tuner, 'waveform', None),
+                    interleave_reference=self.ga_tuner.interleave_reference,
+                    reference_drift_limit_nA=getattr(self.ga_tuner, 'reference_drift_limit_nA', None),
+                    validation_conditions=getattr(self.ga_tuner, 'schedule_conditions', []),
+                    validation_schedule=[dict(role=role,gains=asdict(gains),repeat=repeat)
+                        for role,gains,repeat in getattr(self.ga_tuner, 'schedule', [])],
                     acquisition='qLogExpectedImprovement', device='cpu',
                     mc_samples=self.ga_tuner.optimizer.mc_samples,
                     num_restarts=self.ga_tuner.optimizer.num_restarts,
@@ -4542,7 +4574,30 @@ class PIDGAControlTab(QWidget):
                 f"GA WARNING — DATA LOG DIRECTORY COULD NOT BE CREATED: {exc}"
             )
 
+    def _clear_candidate_wait(self) -> None:
+        self._ga_wait_candidate = None
+        self._ga_wait_started = None
+        self._ga_wait_deadline = None
+        self._ga_wait_reason = ""
+
+    def _wait_for_candidate_beam(self, candidate, snapshot) -> None:
+        now = time.monotonic()
+        if self._ga_wait_candidate is None:
+            self._ga_wait_candidate = candidate
+            self._ga_wait_started = now
+            self._ga_wait_deadline = now + 10.0
+            self._bo_event('BEAM_WAIT_START', candidate=candidate.index + 1,
+                           timeout_s=10.0)
+        self._ga_wait_reason = str(snapshot.get('status', 'INVALID BEAM AVERAGE'))
+        self._ga_sequence_state = "WAITING_FOR_BEAM"
+        elapsed = now - self._ga_wait_started
+        self.ga_status_label.setText(
+            f"WAITING FOR FRESH BEAM — {elapsed:.1f} / 10.0 s")
+        self._ga_sequence_timer.start()
+
     def _start_automatic_candidate(self, candidate: PIDCandidate) -> None:
+        if self._ga_sequence_state in ("STARTING", "EVALUATING"):
+            return
         if not self._ga_auto_active or self.ga_tuner is None:
             return
         if not self.auto_ga_arm_check.isChecked():
@@ -4555,13 +4610,65 @@ class PIDGAControlTab(QWidget):
                 "OUTPUT IS NOT ARMED BEFORE CANDIDATE START", attempt_restore=False
             )
             return
+        index = self._actuator_index
+        if (not self.context.can_write(ControlMode.GA_TUNING)
+                or not self.context.power_states[index]
+                or not self.context.enable_states[index]):
+            self._abort_automatic_ga("CONTROL OWNERSHIP, POWER OR ENABLE LOST BEFORE CANDIDATE START",
+                                     attempt_restore=False)
+            return
+        # Deadline precedes feedback inspection, including recovery at exactly 10 s.
+        if (self._ga_wait_deadline is not None
+                and time.monotonic() >= self._ga_wait_deadline):
+            self._bo_event('BEAM_WAIT_TIMEOUT', elapsed_s=time.monotonic() - self._ga_wait_started,
+                           reason=self._ga_wait_reason)
+            self._abort_automatic_ga("FRESH BEAM DATA UNAVAILABLE FOR 10 S BEFORE CANDIDATE START",
+                                     attempt_restore=True)
+            return
         snapshot = self._beam_window_snapshot()
         beam = float(snapshot.get("value_nA", float("nan")))
-        if not bool(snapshot.get("valid")) or not math.isfinite(beam):
-            self._abort_automatic_ga("FRESH BEAM DATA LOST BEFORE CANDIDATE START", attempt_restore=True)
+        if not all(snapshot.get(key, False) for key in ('valid', 'fresh', 'ready')) or not math.isfinite(beam):
+            self._wait_for_candidate_beam(candidate, snapshot)
             return
-
+        if self._ga_wait_deadline is not None and time.monotonic() >= self._ga_wait_deadline:
+            self._start_automatic_candidate(candidate)  # timeout path; never renew deadline
+            return
         self._present_candidate(candidate)
+        # Presenting gains can trigger UI callbacks. Recheck at the start boundary.
+        final_snapshot = self._beam_window_snapshot()
+        beam = float(final_snapshot.get('value_nA', float('nan')))
+        if (not all(final_snapshot.get(key, False) for key in ('valid', 'fresh', 'ready'))
+                or not math.isfinite(beam)):
+            self._wait_for_candidate_beam(candidate, final_snapshot)
+            return
+        if self._ga_wait_deadline is not None and time.monotonic() >= self._ga_wait_deadline:
+            self._start_automatic_candidate(candidate)
+            return
+        if self._ga_wait_started is not None:
+            self._bo_event('BEAM_WAIT_RECOVERED', elapsed_s=time.monotonic() - self._ga_wait_started)
+        if not self._ga_auto_active:
+            return
+        if (not self.auto_ga_arm_check.isChecked() or not self.arm_output_check.isChecked()
+                or self.output_callback is None or not self.context.can_write(ControlMode.GA_TUNING)
+                or not self.context.power_states[index] or not self.context.enable_states[index]):
+            self._abort_automatic_ga('AUTHORIZATION LOST AT CANDIDATE START', attempt_restore=False)
+            return
+        self._clear_candidate_wait()
+        if getattr(self.ga_tuner, 'is_bo', False):
+            from BO.bo_trial_runner import candidate_readiness
+            try:
+                if not candidate_readiness(self, candidate, final_snapshot):
+                    return
+            except RuntimeError as exc:
+                self._bo_event('READINESS_FAILED', reason=str(exc))
+                self._abort_automatic_ga(str(exc), attempt_restore=True)
+                return
+        if getattr(self.ga_tuner, 'is_bo', False):
+            self._bo_initial_context = dict(beam_nA=beam, setpoint_nA=self.setpoint_spin.value(),
+                target_a=self.context.target(index), actual_a=self.context.actual(index),
+                readiness_duration_s=(time.monotonic()-self._bo_readiness.started
+                    if getattr(self, '_bo_readiness', None) is not None else None))
+        self._ga_sequence_state = "STARTING"
         if getattr(self.ga_tuner, 'is_bo', False) and getattr(self, '_bo_log', None) is not None:
             self._bo_log.trial_id = f'{self._bo_log.run_id}:{candidate.index + 1:03d}'
             try:
@@ -4570,7 +4677,9 @@ class PIDGAControlTab(QWidget):
                 self._bo_log.error = 'GP decision statistics: ' + str(exc)
             self._bo_event('TRIAL_START', proposed_gains=self.ga_tuner.proposed_gains,
                     applied_gains=dict(kp=candidate.gains.kp, ki=candidate.gains.ki, kd=candidate.gains.kd),
-                    source=self.ga_tuner.proposal_source)
+                    source=self.ga_tuner.proposal_source, initial_beam_nA=beam,
+                    initial_target_a=self.context.target(self._actuator_index),
+                    initial_actual_a=self.context.actual(self._actuator_index))
         self._reset_ga_live_response(
             f"G{candidate.generation + 1} / C{candidate.index + 1}"
         )
@@ -4588,6 +4697,19 @@ class PIDGAControlTab(QWidget):
             ),
             timestamp_s=now,
         )
+        if getattr(self.ga_tuner, 'is_bo', False) and self.ga_tuner.validation:
+            self._bo_wave_events = [0.0]
+            self._bo_wave_phase = 0
+            self._bo_original_setpoint = self.setpoint_spin.value()
+            from BO.responsiveness import square_wave_setpoint
+            wave = self.ga_tuner.waveform
+            condition = self.ga_tuner.schedule_conditions[candidate.index]
+            self._bo_wave_center = wave['center_nA'] + condition['offset_nA']
+            target = square_wave_setpoint(0, self._bo_wave_center, wave['amplitude_nA'], wave['half_period_s'])
+            self.setpoint_spin.setValue(target)
+            self.ga_evaluator.setpoint_nA = target
+            self._bo_initial_context['setpoint_nA'] = target
+            self._bo_event('SETPOINT_CHANGE', elapsed_s=0.0, target_nA=target)
         self._ga_sequence_state = "EVALUATING"
         self._ga_starting_pid = True
         try:
@@ -4605,10 +4727,68 @@ class PIDGAControlTab(QWidget):
             f"CANDIDATE {candidate.index + 1} — {self.ga_evaluator.phase.value}"
         )
 
+    def _advance_bo_waveform(self, now: float) -> None:
+        from BO.responsiveness import square_wave_setpoint
+        expected = self.ga_tuner.current_candidate().gains
+        actual = (self.kp_spin.value(), self.ki_spin.value(), self.kd_spin.value())
+        if actual != tuple(round(getattr(expected,name),6) for name in ('kp','ki','kd')):
+            self._abort_automatic_ga('GAINS CHANGED DURING FIXED-GAIN VALIDATION', attempt_restore=True)
+            return
+        wave = self.ga_tuner.waveform
+        elapsed = now - self.ga_evaluator.start_timestamp_s
+        phase = min(wave['transitions'], int(elapsed // wave['half_period_s']))
+        if phase != self._bo_wave_phase:
+            # Record actual dispatch time, not an invented ideal transition time.
+            self._bo_wave_phase = phase
+            target = square_wave_setpoint(phase*wave['half_period_s'], self._bo_wave_center,
+                                          wave['amplitude_nA'], wave['half_period_s'])
+            self.setpoint_spin.setValue(target)
+            self.ga_evaluator.setpoint_nA = target
+            self._beam_cycle_mark = BEAM_BUFFER.mark()
+            self._bo_wave_events.append(elapsed)
+            self._bo_event('SETPOINT_CHANGE', elapsed_s=elapsed, target_nA=target,
+                           gains=dict(kp=self.kp_spin.value(),ki=self.ki_spin.value(),kd=self.kd_spin.value()))
+
     def _complete_automatic_candidate(self, result: GAEvaluationResult) -> None:
         if not self._ga_auto_active or self.ga_tuner is None:
             return
         self._ga_last_result = result
+        if getattr(self.ga_tuner, 'is_bo', False):
+            from BO.responsiveness import analyze_candidate, evaluate_responsiveness
+            from dataclasses import asdict
+            tuner = self.ga_tuner
+            try:
+                if tuner.validation:
+                    rows = result.samples
+                    response = evaluate_responsiveness([s.elapsed_s for s in rows],
+                        [s.beam_nA for s in rows], [s.setpoint_nA for s in rows],
+                        self._bo_wave_events, **asdict(tuner.criteria),
+                        actuator_samples=[s.tc_target_a for s in rows])
+                    analysis = dict(version=response['version'], status=response['status'],
+                        accepted=result.phase.value == 'COMPLETE' and response['status']=='PASS',
+                        data_valid=result.phase.value == 'COMPLETE', responsiveness=response,
+                        role=tuner.role, repeat=tuner.repeat,
+                        condition=tuner.schedule_conditions[result.candidate_number-1]['name'])
+                    demonstrated = {event['direction'] for event in response['events'][1:]
+                                    if event['demonstrates_recovery']}
+                    analysis['demonstrated_directions'] = sorted(demonstrated)
+                    if demonstrated != {'UP','DOWN'}:
+                        analysis.update(accepted=False, status='INSUFFICIENT_DATA',
+                            reasons=['No observed out-of-band recovery in both step directions'])
+                    if len(self._bo_wave_events) != tuner.waveform['transitions']+1:
+                        analysis.update(accepted=False, status='INSUFFICIENT_DATA', reasons=['Missing waveform transitions'])
+                else:
+                    analysis = analyze_candidate(result, self.ga_evaluator, tuner.criteria)
+                    analysis.update(role=tuner.role)
+                analysis['initial'] = getattr(self, '_bo_initial_context', None)
+                tuner.analyses[result.candidate_number-1] = analysis
+                tuner.acceptance[result.candidate_number-1] = analysis['accepted']
+            except (ValueError, TypeError, IndexError) as exc:
+                tuner.analyses[result.candidate_number-1] = dict(status='INSUFFICIENT_DATA',
+                    accepted=False, reasons=[str(exc)], role=tuner.role)
+                tuner.acceptance[result.candidate_number-1] = False
+            if tuner.validation and hasattr(self, '_bo_original_setpoint'):
+                self.setpoint_spin.setValue(self._bo_original_setpoint)
         self.stop_pid(
             reason=f"PID STOPPED — GA CANDIDATE FITNESS {result.score:.6g}",
             restore_manual=False,
@@ -4622,8 +4802,39 @@ class PIDGAControlTab(QWidget):
                        and math.isfinite(result.score)),
             )
         except RuntimeError as exc:
+            if getattr(self.ga_tuner, 'is_hybrid', False) and self.ga_tuner.policy:
+                try:
+                    self._bo_log.json('hybrid_history.json', dict(records=self.ga_tuner.policy.records,
+                        events=self.ga_tuner.policy.events))
+                except (OSError, ValueError, TypeError):
+                    pass  # The measured result is already logged; preserve the original stop reason.
             self._abort_automatic_ga(str(exc), attempt_restore=True)
             return
+        if getattr(self.ga_tuner, 'is_hybrid', False):
+            self._bo_event('HYBRID_RESULT', record=self.ga_tuner.policy.records[-1],
+                           state=str(self.ga_tuner.policy.state), reason=self.ga_tuner.policy.reason)
+            try:
+                self._bo_log.json('hybrid_history.json', dict(records=self.ga_tuner.policy.records,
+                    events=self.ga_tuner.policy.events))
+            except (OSError, ValueError, TypeError) as exc:
+                self._abort_automatic_ga('HYBRID AUDIT EXPORT FAILED: ' + str(exc), attempt_restore=True)
+                return
+        if getattr(self.ga_tuner, 'is_bo', False) and not self.ga_tuner.validation:
+            analysis = self.ga_tuner.analyses.get(result.candidate_number-1, {})
+            if self.ga_tuner.role == 'reference':
+                metric = (analysis.get('metrics') or {}).get('mean_absolute_error')
+                values = getattr(self.ga_tuner, '_reference_maes', [])
+                if metric is not None:
+                    values.append(metric)
+                self.ga_tuner._reference_maes = values
+                drift = max(values)-min(values) if values else None
+                failed = not analysis.get('accepted', False) or (drift is not None and
+                    drift > getattr(self.ga_tuner, 'reference_drift_limit_nA', 0.2))
+                self._bo_event('REFERENCE_CHECK', passed=not failed, mae_range_nA=drift,
+                               analysis=analysis)
+                if failed:
+                    self._abort_automatic_ga('REFERENCE TRACKING / DRIFT CHECK FAILED', attempt_restore=True)
+                    return
         self._record_ga_fitness(
             result.score, safety_violation=result.safety_violation
         )
@@ -4679,7 +4890,8 @@ class PIDGAControlTab(QWidget):
                 self._bo_log.result(result, self.ga_tuner)
                 self.ga_tuner.results.append(dict(source=self.ga_tuner.proposal_source,
                     cost=result.score,
-                    valid=result.phase.value == 'COMPLETE' and math.isfinite(result.score), reason=result.reason))
+                    valid=result.phase.value == 'COMPLETE' and math.isfinite(result.score), reason=result.reason,
+                    analysis=self.ga_tuner.analyses.get(result.candidate_number-1, {})))
         except Exception as exc:  # pragma: no cover - file-system boundary
             if getattr(self.ga_tuner, 'is_bo', False) and getattr(self, '_bo_log', None) is not None:
                 self._bo_log.error = str(exc)
@@ -4760,6 +4972,16 @@ class PIDGAControlTab(QWidget):
             return
 
         now = time.monotonic()
+        if self._ga_sequence_state == "READINESS":
+            candidate = self._bo_ready_candidate
+            if candidate is not None:
+                self._start_automatic_candidate(candidate)
+            return
+        if self._ga_sequence_state == "WAITING_FOR_BEAM":
+            candidate = self._ga_wait_candidate
+            if candidate is not None:
+                self._start_automatic_candidate(candidate)
+            return
         if self._ga_sequence_state == "EVALUATING":
             if not self._pid_running:
                 self._abort_automatic_ga(
@@ -4901,6 +5123,9 @@ class PIDGAControlTab(QWidget):
         if not self._ga_auto_active:
             return
         reason = str(reason)
+        self._clear_candidate_wait()
+        if getattr(self.ga_tuner, 'validation', False) and hasattr(self, '_bo_original_setpoint'):
+            self.setpoint_spin.setValue(self._bo_original_setpoint)
         if self.ga_evaluator.active:
             result = self.ga_evaluator.abort(reason, timestamp_s=time.monotonic())
             self._ga_last_result = result
@@ -4922,6 +5147,7 @@ class PIDGAControlTab(QWidget):
             self._finalize_automatic_ga(False, reason)
 
     def _finalize_automatic_ga(self, success: bool, reason: str) -> None:
+        self._clear_candidate_wait()
         if getattr(self.ga_tuner, "is_bo", False):
             log = getattr(self, '_bo_log', None)
             if log is not None:
