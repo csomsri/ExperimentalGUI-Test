@@ -22,8 +22,8 @@ class BOPIDAdapter:
         self.criteria = TrackingCriteria()
         self.recovery = {"enabled": False}
         self.validation = False
-        self.require_tracking = True
-        self.interleave_reference = True
+        self.require_tracking = False
+        self.interleave_reference = False
         self.reference_gains = None
         self.queued_candidate = None
         self.role = 'candidate'

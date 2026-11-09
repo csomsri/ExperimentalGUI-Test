@@ -1,3 +1,9 @@
+> Current UI update: BO and hybrid now use the existing GA autotune controls.
+> The extra readiness/acceptance panel, limits approval, pilot prerequisite,
+> interleaved reference trials and mandatory waveform validation were removed.
+> Apply loads the best valid observed gains while PID stays stopped. Descriptions
+> of the earlier controlled-testing workflow below are historical.
+
 # ExperimentalGUI BO/PID implementation
 
 Updated November 6, 2026. This is the local implementation record; the supplied

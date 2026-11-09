@@ -64,7 +64,7 @@ class HybridPIDAdapter(BOPIDAdapter):
         best = self.policy.best_result
         self.best_overall = None
         if best:
-            matches = [c for c in self.population if c.valid and self.acceptance.get(c.index, False)
+            matches = [c for c in self.population if c.valid and (not self.require_tracking or self.acceptance.get(c.index, False))
                 and (c.gains.kp,c.gains.ki,c.gains.kd) == (best.candidate.kp,best.candidate.ki,best.candidate.kd)]
             self.best_overall = min(matches, key=lambda c: abs(c.fitness-best.score), default=None)
         if not self.finished:

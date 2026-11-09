@@ -4472,9 +4472,6 @@ class PIDGAControlTab(QWidget):
         self._ga_sequence_state = "PREPARING"
         self._reset_ga_plot()
         self._create_ga_run_directory(evaluation_config, weights)
-        if getattr(self.ga_tuner, 'is_bo', False) and (self._ga_run_dir is None or self._bo_log is None):
-            self._finalize_automatic_ga(False, 'BO START BLOCKED — EXPERIMENT LOGGING IS UNAVAILABLE')
-            return
         self._set_ga_controls_locked(True)
         self.context.set_mode(ControlMode.GA_TUNING)
         self._present_candidate(candidate)
@@ -4655,15 +4652,6 @@ class PIDGAControlTab(QWidget):
             return
         self._clear_candidate_wait()
         if getattr(self.ga_tuner, 'is_bo', False):
-            from BO.bo_trial_runner import candidate_readiness
-            try:
-                if not candidate_readiness(self, candidate, final_snapshot):
-                    return
-            except RuntimeError as exc:
-                self._bo_event('READINESS_FAILED', reason=str(exc))
-                self._abort_automatic_ga(str(exc), attempt_restore=True)
-                return
-        if getattr(self.ga_tuner, 'is_bo', False):
             self._bo_initial_context = dict(beam_nA=beam, setpoint_nA=self.setpoint_spin.value(),
                 target_a=self.context.target(index), actual_a=self.context.actual(index),
                 readiness_duration_s=(time.monotonic()-self._bo_readiness.started
@@ -4754,32 +4742,21 @@ class PIDGAControlTab(QWidget):
             return
         self._ga_last_result = result
         if getattr(self.ga_tuner, 'is_bo', False):
-            from BO.responsiveness import analyze_candidate, evaluate_responsiveness
+            from BO.trial_metrics import evaluate_trial
             from dataclasses import asdict
             tuner = self.ga_tuner
             try:
-                if tuner.validation:
-                    rows = result.samples
-                    response = evaluate_responsiveness([s.elapsed_s for s in rows],
-                        [s.beam_nA for s in rows], [s.setpoint_nA for s in rows],
-                        self._bo_wave_events, **asdict(tuner.criteria),
-                        actuator_samples=[s.tc_target_a for s in rows])
-                    analysis = dict(version=response['version'], status=response['status'],
-                        accepted=result.phase.value == 'COMPLETE' and response['status']=='PASS',
-                        data_valid=result.phase.value == 'COMPLETE', responsiveness=response,
-                        role=tuner.role, repeat=tuner.repeat,
-                        condition=tuner.schedule_conditions[result.candidate_number-1]['name'])
-                    demonstrated = {event['direction'] for event in response['events'][1:]
-                                    if event['demonstrates_recovery']}
-                    analysis['demonstrated_directions'] = sorted(demonstrated)
-                    if demonstrated != {'UP','DOWN'}:
-                        analysis.update(accepted=False, status='INSUFFICIENT_DATA',
-                            reasons=['No observed out-of-band recovery in both step directions'])
-                    if len(self._bo_wave_events) != tuner.waveform['transitions']+1:
-                        analysis.update(accepted=False, status='INSUFFICIENT_DATA', reasons=['Missing waveform transitions'])
-                else:
-                    analysis = analyze_candidate(result, self.ga_evaluator, tuner.criteria)
-                    analysis.update(role=tuner.role)
+                valid = result.phase.value == 'COMPLETE' and not result.safety_violation and math.isfinite(result.score)
+                metrics = evaluate_trial([
+                    (sample.elapsed_s, sample.beam_nA, sample.error_nA,
+                     sample.pid_delta_a, sample.tc_target_a, int(sample.saturated))
+                    for sample in result.samples], self.ga_evaluator.setpoint_nA,
+                    baseline_target=self.ga_evaluator.baseline_target_a,
+                    warmup_seconds=self.ga_evaluator.config.warmup_s,
+                    evaluation_config=self.ga_evaluator.config, fitness_weights=self.ga_evaluator.weights)
+                analysis = dict(status='COMPLETE' if valid else 'INVALID', accepted=valid,
+                    data_valid=valid, metrics=asdict(metrics), role=tuner.role,
+                    acceptance_policy='ga-valid-completed-trial')
                 analysis['initial'] = getattr(self, '_bo_initial_context', None)
                 tuner.analyses[result.candidate_number-1] = analysis
                 tuner.acceptance[result.candidate_number-1] = analysis['accepted']
@@ -4806,7 +4783,7 @@ class PIDGAControlTab(QWidget):
                 try:
                     self._bo_log.json('hybrid_history.json', dict(records=self.ga_tuner.policy.records,
                         events=self.ga_tuner.policy.events))
-                except (OSError, ValueError, TypeError):
+                except (OSError, ValueError, TypeError, AttributeError):
                     pass  # The measured result is already logged; preserve the original stop reason.
             self._abort_automatic_ga(str(exc), attempt_restore=True)
             return
@@ -4816,25 +4793,9 @@ class PIDGAControlTab(QWidget):
             try:
                 self._bo_log.json('hybrid_history.json', dict(records=self.ga_tuner.policy.records,
                     events=self.ga_tuner.policy.events))
-            except (OSError, ValueError, TypeError) as exc:
-                self._abort_automatic_ga('HYBRID AUDIT EXPORT FAILED: ' + str(exc), attempt_restore=True)
-                return
-        if getattr(self.ga_tuner, 'is_bo', False) and not self.ga_tuner.validation:
-            analysis = self.ga_tuner.analyses.get(result.candidate_number-1, {})
-            if self.ga_tuner.role == 'reference':
-                metric = (analysis.get('metrics') or {}).get('mean_absolute_error')
-                values = getattr(self.ga_tuner, '_reference_maes', [])
-                if metric is not None:
-                    values.append(metric)
-                self.ga_tuner._reference_maes = values
-                drift = max(values)-min(values) if values else None
-                failed = not analysis.get('accepted', False) or (drift is not None and
-                    drift > getattr(self.ga_tuner, 'reference_drift_limit_nA', 0.2))
-                self._bo_event('REFERENCE_CHECK', passed=not failed, mae_range_nA=drift,
-                               analysis=analysis)
-                if failed:
-                    self._abort_automatic_ga('REFERENCE TRACKING / DRIFT CHECK FAILED', attempt_restore=True)
-                    return
+            except (OSError, ValueError, TypeError, AttributeError) as exc:
+                if self._bo_log is not None:
+                    self._bo_log.error = 'Hybrid audit export: ' + str(exc)
         self._record_ga_fitness(
             result.score, safety_violation=result.safety_violation
         )
@@ -4972,11 +4933,6 @@ class PIDGAControlTab(QWidget):
             return
 
         now = time.monotonic()
-        if self._ga_sequence_state == "READINESS":
-            candidate = self._bo_ready_candidate
-            if candidate is not None:
-                self._start_automatic_candidate(candidate)
-            return
         if self._ga_sequence_state == "WAITING_FOR_BEAM":
             candidate = self._ga_wait_candidate
             if candidate is not None:
@@ -5367,7 +5323,7 @@ class PIDGAControlTab(QWidget):
 
     def apply_best_gains(self) -> None:
         if getattr(self.ga_tuner, "is_bo", False):
-            self.ga_status_label.setText("Use the BO + PID tab to validate and apply BO gains")
+            self.ga_status_label.setText("Use the BO or hybrid tab to apply its best gains")
             return
         if self._ga_auto_active:
             self.ga_status_label.setText("BEST GAINS CANNOT BE APPLIED DURING AN ACTIVE RUN")

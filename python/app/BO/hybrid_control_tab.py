@@ -15,14 +15,12 @@ class HybridControlTab(BOControlTab):
             'Hybrid GA + BO PID\nGA explores PID gains; BO learns from measured responses. '
             'Legacy uses measured paired handover; windowed modes refine GA parents with '
             'Lamarckian, Baldwinian or mixed inheritance. All trials run through the Python PID. '
-            'Readiness, restoration, independent waveform validation and apply use the shared BO workflow.')
+            'Trials use the same checks, target restoration and apply workflow as GA autotune.')
         self.start.setText('Start hybrid')
         self.arm.setText('Arm hybrid trials using PID output')
         self.budget.setRange(6,500)
         self.budget.setValue(48)
         self.initial_trials.hide()
-        self.interleave.setChecked(False)
-        self.interleave.hide()
         panel = QWidget()
         grid = QGridLayout(panel)
         self.approach = QComboBox()
@@ -33,7 +31,7 @@ class HybridControlTab(BOControlTab):
         grid.addWidget(self.approach,0,1)
         defaults = RollingHybridConfig()
         for i, field in enumerate(fields(defaults)):
-            if field.name in ('learning_mode','budget','seed'):
+            if field.name in ('learning_mode','budget','seed','reference_interval','drift_fraction'):
                 continue
             value = getattr(defaults,field.name)
             editor = QSpinBox() if isinstance(value,int) else QDoubleSpinBox()
@@ -60,29 +58,28 @@ class HybridControlTab(BOControlTab):
 
     def _create_search_adapter(self, bounds):
         return HybridPIDAdapter(bounds, approach=self.approach.currentData(),
-            budget=self.budget.value(), seed=self.seed.value(),
+            budget=self.budget.value(), seed=self.seed.value(), reference_interval=self.budget.value()+1,
             **{name:editor.value() for name,editor in self.hybrid_editors.items()})
 
-    def _launch(self, validation=False):
-        if not validation:
-            from .optimization.hybrid_pid_optimizer import HybridConfig
-            from .optimization.rolling_hybrid_optimizer import RollingHybridConfig
-            settings = {name:e.value() for name,e in self.hybrid_editors.items()}
-            settings.update(budget=self.budget.value(),seed=self.seed.value())
-            try:
-                if self.approach.currentData() == 'legacy':
-                    HybridConfig(**{k:v for k,v in settings.items() if k in HybridConfig.__dataclass_fields__}).validate()
-                else:
-                    RollingHybridConfig(**settings,learning_mode=self.approach.currentData()).validate()
-                for name in ('kp','ki','kd'):
-                    lo,hi = (self.editors[name+suffix].value() for suffix in ('_min_spin','_max_spin'))
-                    gain = getattr(self.pid_tab,name+'_spin').value()
-                    if lo < 0 or hi <= lo or not lo <= gain <= hi:
-                        raise ValueError('Use positive-width nonnegative bounds containing the current PID gains')
-            except ValueError as exc:
-                self.status.setText(str(exc))
-                return
-        super()._launch(validation)
+    def _launch(self):
+        from .optimization.hybrid_pid_optimizer import HybridConfig
+        from .optimization.rolling_hybrid_optimizer import RollingHybridConfig
+        settings = {name:e.value() for name,e in self.hybrid_editors.items()}
+        settings.update(budget=self.budget.value(),seed=self.seed.value())
+        try:
+            if self.approach.currentData() == 'legacy':
+                HybridConfig(**{k:v for k,v in settings.items() if k in HybridConfig.__dataclass_fields__}).validate()
+            else:
+                RollingHybridConfig(**settings,learning_mode=self.approach.currentData()).validate()
+            for name in ('kp','ki','kd'):
+                lo,hi = (self.editors[name+suffix].value() for suffix in ('_min_spin','_max_spin'))
+                gain = getattr(self.pid_tab,name+'_spin').value()
+                if lo < 0 or hi <= lo or not lo <= gain <= hi:
+                    raise ValueError('Use positive-width nonnegative bounds containing the current PID gains')
+        except ValueError as exc:
+            self.status.setText(str(exc))
+            return
+        super()._launch()
         if self.session is not None and getattr(self.session,'is_hybrid',False):
             self.session.interleave_reference = False
 
